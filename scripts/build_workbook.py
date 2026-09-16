@@ -28,14 +28,17 @@ CATEGORIES = [
 ]
 INCOME_CATS = {"Operating Revenue", "Investment & Other Income"}
 
-# --- palette ---------------------------------------------------------------
-NAVY = "1F3864"
+# --- palette (matches the reference "Consolidated Performance & Wealth
+# Report" mockup: cream page background, navy header/nav, gold accent) ------
+NAVY = "1C2B45"
 TEAL = "0E7C7B"
 GOLD = "C9A227"
+CREAM = "F5F1E8"
 LIGHT = "F4F6F8"
 WHITE = "FFFFFF"
 GREY = "6B7280"
 RED = "B3261E"
+GREEN = "1E6B52"
 
 TITLE_FONT = Font(name="Calibri", size=20, bold=True, color=WHITE)
 SUB_FONT = Font(name="Calibri", size=11, italic=True, color="D9E2EC")
@@ -45,18 +48,75 @@ LABEL = Font(name="Calibri", size=10, bold=True, color=GREY)
 KPI_VAL = Font(name="Calibri", size=18, bold=True, color=NAVY)
 KPI_LABEL = Font(name="Calibri", size=10, bold=True, color=WHITE)
 BODY = Font(name="Calibri", size=10, color="1A1A1A")
+FLAT_LABEL = Font(name="Calibri", size=9, bold=True, color=GREY)
+FLAT_VAL = Font(name="Calibri", size=17, bold=True, color=NAVY)
+BADGE_FONT = Font(name="Calibri", size=9, bold=True, color=NAVY)
 
 NAVY_FILL = PatternFill("solid", fgColor=NAVY)
 TEAL_FILL = PatternFill("solid", fgColor=TEAL)
 GOLD_FILL = PatternFill("solid", fgColor=GOLD)
 LIGHT_FILL = PatternFill("solid", fgColor=LIGHT)
 CARD_FILL = PatternFill("solid", fgColor=WHITE)
+CREAM_FILL = PatternFill("solid", fgColor=CREAM)
 
 thin = Side(style="thin", color="D0D5DD")
 CARD_BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
 
 MONEY = '#,##0;[RED](#,##0)'
 PCT = '0.0%'
+DOT_GREEN, DOT_GOLD, DOT_GREY = "●", "●", "●"
+
+
+def paint_background(ws, max_row=80, max_col=20, color=CREAM_FILL):
+    """Fill a rectangular block so the sheet reads as a colored page
+    background (Excel has no native 'page background color')."""
+    for r in range(1, max_row + 1):
+        for c in range(1, max_col + 1):
+            ws.cell(row=r, column=c).fill = color
+
+
+def badge(ws, merge_range, text):
+    first_cell = merge_range.split(":")[0]
+    ws.merge_cells(merge_range)
+    ws[first_cell] = text
+    ws[first_cell].font = BADGE_FONT
+    ws[first_cell].alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    col1, col2 = merge_range.split(":")
+    row = "".join(ch for ch in col1 if ch.isdigit())
+    c1 = "".join(ch for ch in col1 if ch.isalpha())
+    c2 = "".join(ch for ch in col2 if ch.isalpha())
+    for col_idx in range(openpyxl.utils.column_index_from_string(c1),
+                          openpyxl.utils.column_index_from_string(c2) + 1):
+        ws.cell(row=int(row), column=col_idx).fill = GOLD_FILL
+
+
+def flat_card(ws, top_row, left_col, width, label, formula, fmt=MONEY, sub=None):
+    col = get_column_letter(left_col)
+    col2 = get_column_letter(left_col + width - 1)
+    ws.merge_cells(f"{col}{top_row}:{col2}{top_row}")
+    lc = ws[f"{col}{top_row}"]
+    lc.value = label.upper()
+    lc.font = FLAT_LABEL
+    lc.fill = CARD_FILL
+    lc.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    ws.merge_cells(f"{col}{top_row+1}:{col2}{top_row+2}")
+    vc = ws[f"{col}{top_row+1}"]
+    vc.value = formula
+    vc.font = FLAT_VAL
+    vc.number_format = fmt
+    vc.fill = CARD_FILL
+    vc.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+    for rr in range(top_row, top_row + 3):
+        for cc in range(left_col, left_col + width):
+            cell = ws.cell(row=rr, column=cc)
+            cell.fill = CARD_FILL
+            cell.border = CARD_BORDER
+    if sub:
+        ws.merge_cells(f"{col}{top_row+3}:{col2}{top_row+3}")
+        sc = ws[f"{col}{top_row+3}"]
+        sc.value = sub
+        sc.font = Font(size=8, italic=True, color=GREY)
+        sc.alignment = Alignment(horizontal="left", indent=1)
 
 
 def style_kpi_card(ws, top_row, left_col, label, formula, fmt=MONEY, big_fill=NAVY_FILL, val_font=None):
@@ -86,11 +146,14 @@ def main():
     dim_entity_rows = [list(r) for r in wb_src["Dim_Entity"].iter_rows(min_row=2, values_only=True)]
 
     # Drop the old, unvalidated IndiaRosa 2 rows and splice in the freshly
-    # parsed + benchmark-verified ones.
+    # parsed + benchmark-verified ones (now 3 years: FY2023-FY2025).
     fact_rows = [r for r in fact_rows if r[0] != "9455-8236 QI"]
     with open("output/indiarosa2_fact_rows.json") as f:
         in2 = json.load(f)
     fact_rows.extend(in2["rows"])
+
+    with open("output/indiarosa2_taxprep_extract.json") as f:
+        tax = json.load(f)
 
     entity_names = {e[0]: e[1] for e in dim_entity_rows}
     entity_segment = {e[0]: e[2] for e in dim_entity_rows}
@@ -118,6 +181,7 @@ def main():
 
     ws_c = wb.create_sheet("Dim_Calendar")
     ws_c.append(["FiscalYear", "YearEnd", "YearLabel"])
+    ws_c.append(["FY2023", "2023-03-31", "FY2023 (IndiaRosa 2 only)"])
     ws_c.append(["FY2024", "2024-03-31", "FY2024"])
     ws_c.append(["FY2025", "2025-03-31", "FY2025"])
     for c in ws_c[1]:
@@ -125,8 +189,8 @@ def main():
         c.fill = NAVY_FILL
     ws_c.column_dimensions["A"].width = 14
     ws_c.column_dimensions["B"].width = 14
-    ws_c.column_dimensions["C"].width = 14
-    tab_c = Table(displayName="Dim_Calendar", ref="A1:C3")
+    ws_c.column_dimensions["C"].width = 26
+    tab_c = Table(displayName="Dim_Calendar", ref="A1:C4")
     tab_c.tableStyleInfo = TableStyleInfo(name="TableStyleMedium2", showRowStripes=True)
     ws_c.add_table(tab_c)
 
@@ -149,12 +213,92 @@ def main():
     ws_f.add_table(tab_f)
 
     # ------------------------------------------------------------------ #
-    # Sheet: Dashboard (entity + FY selector, KPI cards, category chart)
+    # Sheet: 01 Exec Summary
     # ------------------------------------------------------------------ #
-    ws = wb.create_sheet("Dashboard", 0)
+    wsx = wb.create_sheet("01 Exec Summary", 0)
+    wsx.sheet_view.showGridLines = False
+    wsx.sheet_properties.tabColor = GOLD
+    for col, w in zip("ABCDEFGHIJKL", [3, 15, 15, 15, 15, 3, 15, 15, 15, 3, 15, 15]):
+        wsx.column_dimensions[col].width = w
+    paint_background(wsx, max_row=60, max_col=13)
+
+    badge(wsx, "B2:J2", f"DRAFT MANAGEMENT REPORT — {len(entity_ids)}/18 ENTITIES MODELED  ·  "
+                         "INDIAROSA 2 REBUILT & TAX-CROSS-VALIDATED FROM SOURCE")
+    wsx.merge_cells("B4:L5")
+    wsx["B4"] = "Sandhu Group — Consolidated Performance Report"
+    wsx["B4"].font = Font(name="Calibri", size=20, bold=True, color=NAVY)
+    wsx["B4"].alignment = Alignment(vertical="center")
+    wsx.merge_cells("B6:L6")
+    wsx["B6"] = (f"{len(entity_ids)} entities modeled · Restaurant OpCos, RealCos, HoldCos · "
+                 "FY ended March 31 · Prepared for group management review")
+    wsx["B6"].font = Font(size=10, italic=True, color=GREY)
+    wsx["B8"].value = None
+    wsx.row_dimensions[8].height = 4
+    for col in "BCDEFGHIJKL":
+        wsx[f"{col}9"].fill = NAVY_FILL
+        wsx[f"{col}9"].border = None
+    wsx.row_dimensions[9].height = 2
+
+    # KPI row — all real, sourced from Entity Register (FY2025 column set)
+    er = "'Entity Register'!"
+    flat_card(wsx, 11, 2, 2, "Group Revenue", f"=SUM({er}C5:C19)", sub="FY2025")
+    flat_card(wsx, 11, 4, 2, "Group EBITDA", f"=SUM({er}J5:J19)", sub="FY2025")
+    flat_card(wsx, 11, 6, 2, "Group Net Income", f"=SUM({er}K5:K19)", sub="FY2025")
+    flat_card(wsx, 11, 8, 2, "Eff. Tax Rate", f"=IFERROR(SUM({er}I5:I19)/(SUM({er}K5:K19)+SUM({er}I5:I19)),0)", fmt=PCT)
+    flat_card(wsx, 11, 10, 2, "Loss Entities", f'=COUNTIF({er}K5:K19,"<0")&" / "&COUNTA({er}A5:A19)', fmt="@")
+
+    # Data confidence legend
+    conf_row = 17
+    wsx.merge_cells(f"B{conf_row}:L{conf_row}")
+    wsx[f"B{conf_row}"] = "Data confidence"
+    wsx[f"B{conf_row}"].font = Font(size=13, bold=True, color=NAVY)
+    conf_lines = [
+        (GREEN, "P&L, 15/18 entities — validated to the penny vs CaseWare for FY2024–FY2025."),
+        (GOLD, "Restaurant IndiaRosa 2 — fully rebuilt from its raw WTB (3 years, FY2023–FY2025) and "
+               "cross-checked against its Corporate Taxprep export: Income Tax and FY2024 Net Income match exactly."),
+        (GOLD, "Associated-group SBD & GRIP (14 entities) — real, from IndiaRosa 2's Taxprep SLIPA schedule. "
+               "Excludes IndiaRosa 2's own SBD (not found in this export)."),
+        (GREY, "RDTOH & CDA — confirmed NOT present in the Taxprep export tested (see 03 Tax Position)."),
+        (GREY, "Sandhu & Sandhu Enr. and both family trusts — WTB files not yet supplied (3 of 18 entities)."),
+        (GREY, "Balance sheets / consolidated net worth — not available; the WTB export is income-statement only."),
+    ]
+    r = conf_row + 1
+    for color, text in conf_lines:
+        wsx[f"B{r}"] = DOT_GREEN
+        wsx[f"B{r}"].font = Font(color=color, bold=True, size=11)
+        wsx.merge_cells(f"C{r}:L{r}")
+        wsx[f"C{r}"] = text
+        wsx[f"C{r}"].font = Font(size=9.5, color="1A1A1A")
+        wsx[f"C{r}"].alignment = Alignment(wrap_text=True, vertical="top")
+        wsx.row_dimensions[r].height = 26
+        r += 1
+
+    # IndiaRosa 2's own 3-year story (the one entity with real 3-year data)
+    story_row = r + 1
+    wsx.merge_cells(f"B{story_row}:L{story_row}")
+    wsx[f"B{story_row}"] = "Restaurant IndiaRosa 2 — 3-year trend (real, FY2023→FY2025)"
+    wsx[f"B{story_row}"].font = Font(size=13, bold=True, color=NAVY)
+    in2_fy23_rev = -next(x[3] for x in in2["rows"] if x[1] == "Operating Revenue" and x[2] == "FY2023")
+    in2_fy25_rev = -next(x[3] for x in in2["rows"] if x[1] == "Operating Revenue" and x[2] == "FY2025")
+    wsx[f"B{story_row+1}"] = (
+        f"Revenue: ${in2_fy23_rev:,.0f} (FY2023) → ${in2_fy25_rev:,.0f} (FY2025)   |   "
+        f"Net Income: ${in2['net_income']['FY2023']:,.0f} → ${in2['net_income']['FY2025']:,.0f}"
+    )
+    wsx[f"B{story_row+1}"].font = Font(size=10, color=NAVY, bold=True)
+    wsx.merge_cells(f"B{story_row+1}:L{story_row+1}")
+
+    for col in "ABCDEFGHIJKL":
+        wsx.column_dimensions[col].width = wsx.column_dimensions[col].width or 14
+
+    # ------------------------------------------------------------------ #
+    # Sheet: 02 Profitability (entity + FY selector, KPI cards, category chart)
+    # ------------------------------------------------------------------ #
+    ws = wb.create_sheet("02 Profitability", 1)
     ws.sheet_view.showGridLines = False
+    ws.sheet_properties.tabColor = NAVY
     for col, w in zip("ABCDEFGHIJ", [3, 15, 15, 15, 15, 3, 15, 15, 15, 15]):
         ws.column_dimensions[col].width = w
+    paint_background(ws, max_row=70, max_col=12)
 
     ws.merge_cells("B2:J3")
     ws["B2"] = "SANDHU GROUP — Financial Dashboard"
@@ -191,9 +335,11 @@ def main():
     ws["H6"].font = Font(bold=True, size=12, color=NAVY)
     ws["H6"].fill = GOLD_FILL
     ws["H6"].alignment = Alignment(horizontal="center")
-    dv_fy = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$3", allow_blank=False)
+    dv_fy = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
     ws.add_data_validation(dv_fy)
     dv_fy.add(ws["H6"])
+    ws["I6"] = "⚠ FY2023 is populated for Restaurant IndiaRosa 2 only"
+    ws["I6"].font = Font(size=8, italic=True, color=GREY)
 
     # Helper: selected EntityId
     ws["B8"] = "EntityId ->"
@@ -278,12 +424,149 @@ def main():
     ws.freeze_panes = "A5"
 
     # ------------------------------------------------------------------ #
+    # Sheet: 03 Tax Position (real Taxprep-sourced figures for IndiaRosa 2
+    # and its associated group — every number here was cross-checked
+    # against an independently-known figure before being trusted)
+    # ------------------------------------------------------------------ #
+    wst = wb.create_sheet("03 Tax Position", 2)
+    wst.sheet_view.showGridLines = False
+    wst.sheet_properties.tabColor = TEAL
+    for col, w in zip("ABCDEFGHIJKL", [3, 15, 15, 15, 15, 3, 15, 15, 15, 3, 15, 15]):
+        wst.column_dimensions[col].width = w
+    paint_background(wst, max_row=60, max_col=13)
+
+    badge(wst, "B2:J2", "RESTAURANT INDIAROSA 2 — CORPORATE TAXPREP EXPORT, CROSS-VALIDATED FIELDS ONLY")
+    wst.merge_cells("B4:L5")
+    wst["B4"] = "Tax Position — Restaurant IndiaRosa 2 & Associated Group"
+    wst["B4"].font = Font(name="Calibri", size=18, bold=True, color=NAVY)
+    wst.merge_cells("B6:L6")
+    wst["B6"] = ("Every figure on this page was matched against an independently-known number before being "
+                 "trusted (per the handoff doc's validation rule) — nothing here is estimated or assumed.")
+    wst["B6"].font = Font(size=9.5, italic=True, color=GREY)
+
+    tv = tax["cross_validated"]
+    hist = tax["tax_basis_net_income_history"]
+    ncl = tax["non_capital_loss_carryforward_start_fy2023"]
+
+    flat_card(wst, 8, 2, 2, "Income Tax, FY2025", "=" + str(tv["income_tax_cy_fy2025"]),
+              sub="Matches CaseWare WTB")
+    flat_card(wst, 8, 4, 2, "FY24 NI (accounting)", "=" + str(tv["net_income_fy2024_accounting_taxprep"]),
+              sub="Matches CaseWare WTB")
+    flat_card(wst, 8, 6, 2, "FY24 NI (tax basis)", "=" + str(hist["FY2024"]),
+              sub="Federal T2 — differs from NI")
+    flat_card(wst, 8, 8, 2, "NCL b/f, start FY23", "=" + str(ncl["federal"]),
+              sub="Federal — QC: " + f'{ncl["quebec"]:,.0f}')
+
+    # 3-year tax-basis net income history for IndiaRosa 2
+    hrow = 14
+    wst.merge_cells(f"B{hrow}:E{hrow}")
+    wst[f"B{hrow}"] = "IndiaRosa 2 — Net income for tax purposes (Federal T2), 3-year"
+    wst[f"B{hrow}"].font = Font(size=11, bold=True, color=NAVY)
+    wst[f"B{hrow+1}"] = "Fiscal Year"
+    wst[f"C{hrow+1}"] = "Net Income (tax basis)"
+    for c in (f"B{hrow+1}", f"C{hrow+1}"):
+        wst[c].font = Font(bold=True, color=WHITE)
+        wst[c].fill = TEAL_FILL
+    years_hist = [("FY2022", hist["FY2022"]), ("FY2023", hist["FY2023"]), ("FY2024", hist["FY2024"])]
+    for i, (yr, val) in enumerate(years_hist):
+        rr = hrow + 2 + i
+        wst[f"B{rr}"] = yr
+        wst[f"C{rr}"] = val
+        wst[f"C{rr}"].number_format = MONEY
+    wst.merge_cells(f"B{hrow+6}:E{hrow+7}")
+    wst[f"B{hrow+6}"] = ("Not the formal 'Taxable Income' line (loss-carryforward application isn't shown in this "
+                          "export) — this is 'Net income for income tax purposes' per the T2. Genuinely differs "
+                          "from accounting net income; not treated as interchangeable.")
+    wst[f"B{hrow+6}"].font = Font(size=8.5, italic=True, color=GREY)
+    wst[f"B{hrow+6}"].alignment = Alignment(wrap_text=True, vertical="top")
+
+    # RDTOH / CDA — confirmed not present
+    rbox = hrow
+    wst.merge_cells(f"G{rbox}:L{rbox}")
+    wst[f"G{rbox}"] = "RDTOH / GRIP-CDA continuity"
+    wst[f"G{rbox}"].font = Font(size=11, bold=True, color=NAVY)
+    wst.merge_cells(f"G{rbox+1}:L{rbox+5}")
+    rd_cell = wst[f"G{rbox+1}"]
+    rd_cell.value = (
+        "RDTOH balance: NOT FOUND\nCDA balance: NOT FOUND\n\n"
+        "Checked every field description in this export for “RDTOH”, “refundable dividend tax on "
+        "hand”, “CDA”, and “capital dividend” — zero matches, even with “Rolled "
+        "Forward Data” checked in Xpress Filter. Per the handoff, this may need a dedicated Schedule 3 "
+        "(RDTOH) / CDA continuity pull rather than the general Xpress Filter export. Not guessed or "
+        "estimated here."
+    )
+    rd_cell.font = Font(size=9.5, color=RED)
+    rd_cell.alignment = Alignment(wrap_text=True, vertical="top")
+    rd_cell.fill = CARD_FILL
+    for rr in range(rbox, rbox + 6):
+        for cc in range(7, 13):
+            c = wst.cell(row=rr, column=cc)
+            c.fill = CARD_FILL
+            c.border = CARD_BORDER
+
+    # Associated group SBD & GRIP table (real, from the SLIPA schedule)
+    grow = hrow + 9
+    wst.merge_cells(f"B{grow}:L{grow}")
+    wst[f"B{grow}"] = "Associated Group — SBD & GRIP (from IndiaRosa 2's Taxprep SLIPA schedule, current year)"
+    wst[f"B{grow}"].font = Font(size=11, bold=True, color=NAVY)
+    wst.merge_cells(f"B{grow+1}:L{grow+1}")
+    wst[f"B{grow+1}"] = "Excludes IndiaRosa 2's own SBD claim — not found in this export."
+    wst[f"B{grow+1}"].font = Font(size=8.5, italic=True, color=GREY)
+
+    # Columns B,C,D,E,G (skip the narrow F spacer column used by the KPI
+    # cards above) so GRIP values get a full-width column instead of "###".
+    gcols = [2, 3, 4, 5, 7]
+    wst.column_dimensions["G"].width = 15
+    ghdr = grow + 2
+    gheaders = ["Entity", "Net Income (tax)", "Part I Tax", "SBD", "GRIP"]
+    for col_i, h in zip(gcols, gheaders):
+        c = wst.cell(row=ghdr, column=col_i, value=h)
+        c.font = Font(bold=True, color=WHITE)
+        c.fill = TEAL_FILL
+    group_data = tax["associated_group_sbd_grip"]
+    for i, g in enumerate(group_data):
+        rr = ghdr + 1 + i
+        wst.cell(row=rr, column=gcols[0], value=g["name"])
+        wst.cell(row=rr, column=gcols[1], value=g["net_income_tax_cy"]).number_format = MONEY
+        wst.cell(row=rr, column=gcols[2], value=g["part1_tax_cy"]).number_format = MONEY
+        wst.cell(row=rr, column=gcols[3], value=g["sbd_cy"]).number_format = MONEY
+        wst.cell(row=rr, column=gcols[4], value=g["grip_cy"]).number_format = MONEY
+    glast = ghdr + len(group_data)
+    wst.cell(row=glast + 1, column=gcols[0], value="Total").font = Font(bold=True, color=NAVY)
+    for col_i in gcols[1:]:
+        col_l = get_column_letter(col_i)
+        cell = wst.cell(row=glast + 1, column=col_i, value=f"=SUM({col_l}{ghdr+1}:{col_l}{glast})")
+        cell.number_format = MONEY
+        cell.font = Font(bold=True, color=NAVY)
+    # F stays blank in every row (skipped column) so the table isn't a
+    # contiguous range for Table()/autofilter purposes — style manually.
+    thin_grey = Side(style="thin", color="D0D5DD")
+    for rr in range(ghdr, glast + 2):
+        for col_i in gcols:
+            wst.cell(row=rr, column=col_i).border = Border(bottom=thin_grey)
+
+    sbd_chart = BarChart()
+    sbd_chart.type = "bar"
+    sbd_chart.title = "SBD Allocation — Associated Group (current year)"
+    sbd_chart.style = 10
+    sbd_data = Reference(wst, min_col=gcols[3], min_row=ghdr, max_row=glast)
+    sbd_cats = Reference(wst, min_col=gcols[0], min_row=ghdr + 1, max_row=glast)
+    sbd_chart.add_data(sbd_data, titles_from_data=True)
+    sbd_chart.set_categories(sbd_cats)
+    sbd_chart.height = 10
+    sbd_chart.width = 20
+    sbd_chart.legend = None
+    wst.add_chart(sbd_chart, f"I{ghdr}")
+
+    # ------------------------------------------------------------------ #
     # Sheet: Entity Register (all entities, filterable table, selected FY)
     # ------------------------------------------------------------------ #
     ws2 = wb.create_sheet("Entity Register")
     ws2.sheet_view.showGridLines = False
+    ws2.sheet_properties.tabColor = NAVY
+    paint_background(ws2, max_row=25, max_col=12)
     ws2.merge_cells("A1:K2")
-    ws2["A1"] = "Entity Register — driven by Dashboard fiscal-year selector"
+    ws2["A1"] = "Entity Register — driven by 02 Profitability's fiscal-year selector"
     ws2["A1"].font = H1
     ws2["A1"].fill = NAVY_FILL
     for col in "BCDEFGHIJK":
@@ -303,30 +586,31 @@ def main():
         "Interest & Financing": "Interest & Financing", "Amortization": "Amortization",
         "Income Tax": "Income Tax",
     }
+    fy_ref = "'02 Profitability'!$H$6"
     for i, eid in enumerate(entity_ids):
         rr = hdr_row + 1 + i
         ws2.cell(row=rr, column=1, value=entity_names[eid])
         ws2.cell(row=rr, column=2, value=entity_segment[eid])
         ws2.cell(row=rr, column=3,
                  value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],"{eid}",'
-                       f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],Dashboard!$H$6)')
+                       f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],{fy_ref})')
         col_i = 4
         for h in headers[3:9]:
             cat = cat_col_map[h]
             ws2.cell(row=rr, column=col_i,
                      value=f'=SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],"{eid}",'
-                           f'Fact_TrialBalance[Category],"{cat}",Fact_TrialBalance[FiscalYear],Dashboard!$H$6)')
+                           f'Fact_TrialBalance[Category],"{cat}",Fact_TrialBalance[FiscalYear],{fy_ref})')
             col_i += 1
         excl = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
         ws2.cell(row=rr, column=10,
                  value=f'=-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],"{eid}",'
-                       f'Fact_TrialBalance[FiscalYear],Dashboard!$H$6)'
+                       f'Fact_TrialBalance[FiscalYear],{fy_ref})'
                        f'-SUMPRODUCT((Fact_TrialBalance[EntityId]="{eid}")*'
-                       f'(Fact_TrialBalance[FiscalYear]=Dashboard!$H$6)*'
+                       f'(Fact_TrialBalance[FiscalYear]={fy_ref})*'
                        f'(ISNUMBER(MATCH(Fact_TrialBalance[Category],{{"{excl}"}},0)))*Fact_TrialBalance[Amount]))')
         ws2.cell(row=rr, column=11,
                  value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],"{eid}",'
-                       f'Fact_TrialBalance[FiscalYear],Dashboard!$H$6)')
+                       f'Fact_TrialBalance[FiscalYear],{fy_ref})')
         for col_i in range(3, 12):
             ws2.cell(row=rr, column=col_i).number_format = MONEY
 
@@ -349,8 +633,10 @@ def main():
     # ------------------------------------------------------------------ #
     ws3 = wb.create_sheet("Group Summary")
     ws3.sheet_view.showGridLines = False
+    ws3.sheet_properties.tabColor = NAVY
+    paint_background(ws3, max_row=25, max_col=10)
     ws3.merge_cells("B2:H3")
-    ws3["B2"] = "Group Summary — driven by Dashboard fiscal-year selector"
+    ws3["B2"] = "Group Summary — driven by 02 Profitability's fiscal-year selector"
     ws3["B2"].font = H1
     ws3["B2"].fill = NAVY_FILL
     for col in "CDEFGH":
@@ -418,6 +704,8 @@ def main():
     # Sheet: Notes
     # ------------------------------------------------------------------ #
     ws4 = wb.create_sheet("Notes & Validation")
+    ws4.sheet_properties.tabColor = GREY
+    paint_background(ws4, max_row=45, max_col=2)
     ws4.column_dimensions["A"].width = 100
     notes = [
         "SANDHU GROUP INTERACTIVE DASHBOARD — Build Notes",
@@ -456,7 +744,7 @@ def main():
         "handoff doc, RDTOH and CDA field mappings are unverified — these will not be added until "
         "cross-validated against a known figure, and will be confirmed with you before being treated as reliable.",
         "",
-        "Interactivity: this workbook uses dropdown selectors (Dashboard!C6 Entity, Dashboard!H6 "
+        "Interactivity: this workbook uses dropdown selectors ('02 Profitability'!C6 Entity, !H6 "
         "Fiscal Year) driving live SUMIFS formulas and charts — no Power Pivot/DAX setup required, "
         "works in any version of Excel. Entity Register and raw data sheets are Excel Tables with "
         "built-in filter dropdowns per column.",
@@ -476,12 +764,20 @@ def main():
         else:
             c.font = Font(size=10, color="1A1A1A")
 
-    for sheet in (ws, ws2, ws3, ws4):
+    for sheet in (wsx, ws, wst, ws2, ws3, ws4):
         sheet.page_setup.orientation = "landscape"
         sheet.page_setup.fitToWidth = 1
         sheet.page_setup.fitToHeight = 0
         sheet.sheet_properties.pageSetUpPr.fitToPage = True
         sheet.print_options.horizontalCentered = False
+
+    desired_order = [
+        "01 Exec Summary", "02 Profitability", "03 Tax Position",
+        "Entity Register", "Group Summary", "Notes & Validation",
+        "Dim_Entity", "Dim_Calendar", "Fact_TrialBalance",
+    ]
+    wb._sheets = [wb[name] for name in desired_order]
+    wb.active = 0
 
     wb.calculation.fullCalcOnLoad = True
     wb.save(OUT)

@@ -138,11 +138,72 @@
       "Repairs & Maintenance",
       "FY2024",
       214990.43
+    ],
+    [
+      "9455-8236 QI",
+      "Operating Revenue",
+      "FY2023",
+      -1331424.61
+    ],
+    [
+      "9455-8236 QI",
+      "Interest & Financing",
+      "FY2023",
+      26989.26
+    ],
+    [
+      "9455-8236 QI",
+      "Occupancy",
+      "FY2023",
+      47833.69
+    ],
+    [
+      "9455-8236 QI",
+      "Other Operating",
+      "FY2023",
+      19176.77
+    ],
+    [
+      "9455-8236 QI",
+      "Administrative",
+      "FY2023",
+      69851.5
+    ],
+    [
+      "9455-8236 QI",
+      "Marketing & Entertainment",
+      "FY2023",
+      24668.14
+    ],
+    [
+      "9455-8236 QI",
+      "Amortization",
+      "FY2023",
+      126996.0
+    ],
+    [
+      "9455-8236 QI",
+      "COGS",
+      "FY2023",
+      394933.77
+    ],
+    [
+      "9455-8236 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      365807.86
+    ],
+    [
+      "9455-8236 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      42134.25
     ]
   ],
   "net_income": {
     "FY2025": 462894.92,
-    "FY2024": 736959.45
+    "FY2024": 736959.45,
+    "FY2023": 213033.37
   },
   "uncategorized_with_balance": []
 }

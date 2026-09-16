@@ -1,0 +1,164 @@
+{
+  "cross_validated": {
+    "income_tax_cy_fy2025": 62548.0,
+    "expected_income_tax_fy2025": 62548.0,
+    "net_income_fy2024_accounting_taxprep": 736959.0,
+    "expected_net_income_fy2024": 736959.45
+  },
+  "tax_basis_net_income_history": {
+    "FY2024": 918366.0,
+    "FY2023": -1271829.0,
+    "FY2022": -59186.0,
+    "note": "Federal T2 'Net income for income tax purposes' \u2014 NOT the formal Taxable Income line (loss-carryforward application not shown). Genuinely differs from accounting net income; do not conflate."
+  },
+  "non_capital_loss_carryforward_start_fy2023": {
+    "federal": 412649.0,
+    "quebec": 423312.0
+  },
+  "rdtoh_found": false,
+  "cda_found": false,
+  "own_current_year_tax_figures_found": false,
+  "own_sbd_found": false,
+  "associated_group_sbd_grip": [
+    {
+      "name": "9357-7427 Qu\u00e9bec Inc.",
+      "net_income_tax_cy": -3147.0,
+      "net_income_tax_py": -2736.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9366-1676 Quebec Inc.",
+      "net_income_tax_cy": -665484.0,
+      "net_income_tax_py": -297742.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9425-4547 Qu\u00e9bec Inc.",
+      "net_income_tax_cy": 112788.0,
+      "net_income_tax_py": 100607.0,
+      "part1_tax_cy": 12155.0,
+      "sbd_cy": 20146.0,
+      "sbd_py": 16282.0,
+      "grip_cy": 29568.0,
+      "grip_py": 29568.0
+    },
+    {
+      "name": "9455-4169 Quebec Inc.",
+      "net_income_tax_cy": -3065.0,
+      "net_income_tax_py": -3248.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9455-4177 Quebec Inc.",
+      "net_income_tax_cy": -3015.0,
+      "net_income_tax_py": -2945.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9455-4201 Quebec inc.",
+      "net_income_tax_cy": 577222.0,
+      "net_income_tax_py": 1502489.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9108-6876 Quebec Inc.",
+      "net_income_tax_cy": 390551.0,
+      "net_income_tax_py": 59381.0,
+      "part1_tax_cy": 8318.0,
+      "sbd_cy": 16540.0,
+      "sbd_py": 0.0,
+      "grip_cy": 2325.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "Bistro Guru Inc.",
+      "net_income_tax_cy": -32467.0,
+      "net_income_tax_py": 8543.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9096-0436 Quebec Inc.",
+      "net_income_tax_cy": -21235.0,
+      "net_income_tax_py": 9387.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 1784.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9366-1049 Qu\u00e9bec Inc.",
+      "net_income_tax_cy": 312963.0,
+      "net_income_tax_py": 100407.0,
+      "part1_tax_cy": 35338.0,
+      "sbd_cy": 36755.0,
+      "sbd_py": 19077.0,
+      "grip_cy": 229599.0,
+      "grip_py": 143547.0
+    },
+    {
+      "name": "9098-0558 Quebec Inc.",
+      "net_income_tax_cy": -13045.0,
+      "net_income_tax_py": 36288.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 6895.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "2749-8567 Quebec Inc.",
+      "net_income_tax_cy": 28760.0,
+      "net_income_tax_py": 25621.0,
+      "part1_tax_cy": 2864.0,
+      "sbd_cy": 4594.0,
+      "sbd_py": 4868.0,
+      "grip_cy": 3297.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9504-7510 Qu\u00e9bec Inc.",
+      "net_income_tax_cy": -465609.0,
+      "net_income_tax_py": -8050.0,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": 0.0,
+      "grip_cy": 0.0,
+      "grip_py": 0.0
+    },
+    {
+      "name": "9525-2854 Qu\u00e9bec Inc.",
+      "net_income_tax_cy": -55143.0,
+      "net_income_tax_py": null,
+      "part1_tax_cy": 0.0,
+      "sbd_cy": 0.0,
+      "sbd_py": null,
+      "grip_cy": 0.0,
+      "grip_py": null
+    }
+  ]
+}

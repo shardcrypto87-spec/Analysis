@@ -64,19 +64,20 @@ def main():
     rows = list(ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True))
     inc = [r for r in rows if r[4] == "Income statement"]
 
-    totals = {"FY2025": defaultdict(float), "FY2024": defaultdict(float)}
+    totals = {"FY2025": defaultdict(float), "FY2024": defaultdict(float), "FY2023": defaultdict(float)}
     uncategorized = []
     for r in inc:
         acct, name, mapno, gifi = r[0], r[1], r[3], r[13]
-        final_cy, final_py = r[12], r[14]
+        final_cy, final_py, final_py2 = r[12], r[14], r[15]
         cat = categorize(acct, gifi, mapno, gifi_map, fallback)
-        if cat == "UNCATEGORIZED" and (final_cy or final_py):
-            uncategorized.append((acct, name, final_cy, final_py))
+        if cat == "UNCATEGORIZED" and (final_cy or final_py or final_py2):
+            uncategorized.append((acct, name, final_cy, final_py, final_py2))
         totals["FY2025"][cat] += final_cy or 0
         totals["FY2024"][cat] += final_py or 0
+        totals["FY2023"][cat] += final_py2 or 0
 
     out_rows = []
-    for fy in ["FY2025", "FY2024"]:
+    for fy in ["FY2025", "FY2024", "FY2023"]:
         for cat, amt in totals[fy].items():
             if cat == "UNCATEGORIZED":
                 continue
@@ -97,9 +98,10 @@ def main():
 
     print("Net income FY2025:", net_income["FY2025"], " (benchmark 462,894.92)")
     print("Net income FY2024:", net_income["FY2024"], " (benchmark 736,959.45)")
+    print("Net income FY2023:", net_income["FY2023"], " (cross-check vs Taxprep: 213,033)")
     print("Uncategorized rows with nonzero balance:", uncategorized)
     print()
-    for fy in ["FY2025", "FY2024"]:
+    for fy in ["FY2025", "FY2024", "FY2023"]:
         print(f"--- {fy} ---")
         for cat, amt in sorted(totals[fy].items()):
             if cat != "UNCATEGORIZED" or amt:
