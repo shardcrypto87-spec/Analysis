@@ -1,0 +1,2036 @@
+{
+  "fact_rows": [
+    [
+      "9455-8236 QI",
+      "Operating Revenue",
+      "FY2025",
+      -5213628.68
+    ],
+    [
+      "9455-8236 QI",
+      "Management Fees (Interco)",
+      "FY2025",
+      30000.0
+    ],
+    [
+      "9455-8236 QI",
+      "Interest & Financing",
+      "FY2025",
+      146738.3
+    ],
+    [
+      "9455-8236 QI",
+      "Occupancy",
+      "FY2025",
+      474171.72
+    ],
+    [
+      "9455-8236 QI",
+      "Other Operating",
+      "FY2025",
+      79976.26
+    ],
+    [
+      "9455-8236 QI",
+      "Administrative",
+      "FY2025",
+      99728.72
+    ],
+    [
+      "9455-8236 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      141793.12
+    ],
+    [
+      "9455-8236 QI",
+      "Amortization",
+      "FY2025",
+      199058.0
+    ],
+    [
+      "9455-8236 QI",
+      "COGS",
+      "FY2025",
+      1647558.89
+    ],
+    [
+      "9455-8236 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      1780201.39
+    ],
+    [
+      "9455-8236 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      88959.36
+    ],
+    [
+      "9455-8236 QI",
+      "Income Tax",
+      "FY2025",
+      62548.0
+    ],
+    [
+      "9455-8236 QI",
+      "Operating Revenue",
+      "FY2024",
+      -6233247.68
+    ],
+    [
+      "9455-8236 QI",
+      "Management Fees (Interco)",
+      "FY2024",
+      105000.0
+    ],
+    [
+      "9455-8236 QI",
+      "Interest & Financing",
+      "FY2024",
+      178561.41
+    ],
+    [
+      "9455-8236 QI",
+      "Occupancy",
+      "FY2024",
+      382549.29
+    ],
+    [
+      "9455-8236 QI",
+      "Other Operating",
+      "FY2024",
+      73281.73
+    ],
+    [
+      "9455-8236 QI",
+      "Administrative",
+      "FY2024",
+      88387.59
+    ],
+    [
+      "9455-8236 QI",
+      "Marketing & Entertainment",
+      "FY2024",
+      161333.63
+    ],
+    [
+      "9455-8236 QI",
+      "Amortization",
+      "FY2024",
+      222195.0
+    ],
+    [
+      "9455-8236 QI",
+      "COGS",
+      "FY2024",
+      1888352.46
+    ],
+    [
+      "9455-8236 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      2181636.69
+    ],
+    [
+      "9455-8236 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      214990.43
+    ],
+    [
+      "9455-8236 QI",
+      "Operating Revenue",
+      "FY2023",
+      -1331424.61
+    ],
+    [
+      "9455-8236 QI",
+      "Interest & Financing",
+      "FY2023",
+      26989.26
+    ],
+    [
+      "9455-8236 QI",
+      "Occupancy",
+      "FY2023",
+      47833.69
+    ],
+    [
+      "9455-8236 QI",
+      "Other Operating",
+      "FY2023",
+      19176.77
+    ],
+    [
+      "9455-8236 QI",
+      "Administrative",
+      "FY2023",
+      69851.5
+    ],
+    [
+      "9455-8236 QI",
+      "Marketing & Entertainment",
+      "FY2023",
+      24668.14
+    ],
+    [
+      "9455-8236 QI",
+      "Amortization",
+      "FY2023",
+      126996.0
+    ],
+    [
+      "9455-8236 QI",
+      "COGS",
+      "FY2023",
+      394933.77
+    ],
+    [
+      "9455-8236 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      365807.86
+    ],
+    [
+      "9455-8236 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      42134.25
+    ],
+    [
+      "9357-7427 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      477.24
+    ],
+    [
+      "9357-7427 QI",
+      "Administrative",
+      "FY2025",
+      2597.0
+    ],
+    [
+      "9357-7427 QI",
+      "Interest & Financing",
+      "FY2025",
+      72.58
+    ],
+    [
+      "9357-7427 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      358.94
+    ],
+    [
+      "9357-7427 QI",
+      "Administrative",
+      "FY2024",
+      2329.0
+    ],
+    [
+      "9357-7427 QI",
+      "Interest & Financing",
+      "FY2024",
+      47.81
+    ],
+    [
+      "9357-7427 QI",
+      "Operating Revenue",
+      "FY2023",
+      -31929.0
+    ],
+    [
+      "9357-7427 QI",
+      "COGS",
+      "FY2023",
+      29026.44
+    ],
+    [
+      "9357-7427 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      90.0
+    ],
+    [
+      "9357-7427 QI",
+      "Administrative",
+      "FY2023",
+      27273.26
+    ],
+    [
+      "9357-7427 QI",
+      "Interest & Financing",
+      "FY2023",
+      71.4
+    ],
+    [
+      "9366-1676 QI",
+      "Operating Revenue",
+      "FY2025",
+      -190152.12
+    ],
+    [
+      "9366-1676 QI",
+      "Interest & Financing",
+      "FY2025",
+      396762.02
+    ],
+    [
+      "9366-1676 QI",
+      "Amortization",
+      "FY2025",
+      204136.0
+    ],
+    [
+      "9366-1676 QI",
+      "Administrative",
+      "FY2025",
+      215463.66
+    ],
+    [
+      "9366-1676 QI",
+      "Occupancy",
+      "FY2025",
+      33717.57
+    ],
+    [
+      "9366-1676 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      425.0
+    ],
+    [
+      "9366-1676 QI",
+      "Operating Revenue",
+      "FY2024",
+      -188197.75
+    ],
+    [
+      "9366-1676 QI",
+      "Interest & Financing",
+      "FY2024",
+      219534.62
+    ],
+    [
+      "9366-1676 QI",
+      "Amortization",
+      "FY2024",
+      94472.0
+    ],
+    [
+      "9366-1676 QI",
+      "Administrative",
+      "FY2024",
+      152117.58
+    ],
+    [
+      "9366-1676 QI",
+      "Occupancy",
+      "FY2024",
+      16431.97
+    ],
+    [
+      "9366-1676 QI",
+      "Operating Revenue",
+      "FY2023",
+      -220172.35
+    ],
+    [
+      "9366-1676 QI",
+      "Management Fees (Interco)",
+      "FY2023",
+      -12000.0
+    ],
+    [
+      "9366-1676 QI",
+      "Interest & Financing",
+      "FY2023",
+      80807.78
+    ],
+    [
+      "9366-1676 QI",
+      "Amortization",
+      "FY2023",
+      94975.0
+    ],
+    [
+      "9366-1676 QI",
+      "Administrative",
+      "FY2023",
+      121093.68
+    ],
+    [
+      "9366-1676 QI",
+      "Occupancy",
+      "FY2023",
+      13011.85
+    ],
+    [
+      "9366-1676 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      7000.0
+    ],
+    [
+      "9425-4547 QI",
+      "Operating Revenue",
+      "FY2025",
+      -273186.0
+    ],
+    [
+      "9425-4547 QI",
+      "Investment & Other Income",
+      "FY2025",
+      -84146.62
+    ],
+    [
+      "9425-4547 QI",
+      "Interest & Financing",
+      "FY2025",
+      147839.0
+    ],
+    [
+      "9425-4547 QI",
+      "Amortization",
+      "FY2025",
+      14870.0
+    ],
+    [
+      "9425-4547 QI",
+      "Administrative",
+      "FY2025",
+      81647.35
+    ],
+    [
+      "9425-4547 QI",
+      "Occupancy",
+      "FY2025",
+      8110.21
+    ],
+    [
+      "9425-4547 QI",
+      "Income Tax",
+      "FY2025",
+      14359.0
+    ],
+    [
+      "9425-4547 QI",
+      "Operating Revenue",
+      "FY2024",
+      -247975.0
+    ],
+    [
+      "9425-4547 QI",
+      "Investment & Other Income",
+      "FY2024",
+      -62108.84
+    ],
+    [
+      "9425-4547 QI",
+      "Interest & Financing",
+      "FY2024",
+      108814.51
+    ],
+    [
+      "9425-4547 QI",
+      "Amortization",
+      "FY2024",
+      15473.0
+    ],
+    [
+      "9425-4547 QI",
+      "Administrative",
+      "FY2024",
+      84635.6
+    ],
+    [
+      "9425-4547 QI",
+      "Occupancy",
+      "FY2024",
+      6455.93
+    ],
+    [
+      "9425-4547 QI",
+      "Income Tax",
+      "FY2024",
+      13363.0
+    ],
+    [
+      "9425-4547 QI",
+      "Operating Revenue",
+      "FY2023",
+      -234180.0
+    ],
+    [
+      "9425-4547 QI",
+      "Management Fees (Interco)",
+      "FY2023",
+      12000.0
+    ],
+    [
+      "9425-4547 QI",
+      "Investment & Other Income",
+      "FY2023",
+      5374.62
+    ],
+    [
+      "9425-4547 QI",
+      "Interest & Financing",
+      "FY2023",
+      55542.0
+    ],
+    [
+      "9425-4547 QI",
+      "Amortization",
+      "FY2023",
+      15710.0
+    ],
+    [
+      "9425-4547 QI",
+      "Administrative",
+      "FY2023",
+      88267.41
+    ],
+    [
+      "9425-4547 QI",
+      "Occupancy",
+      "FY2023",
+      5719.82
+    ],
+    [
+      "9425-4547 QI",
+      "Income Tax",
+      "FY2023",
+      13857.0
+    ],
+    [
+      "9455-4169 QI",
+      "Administrative",
+      "FY2025",
+      2994.0
+    ],
+    [
+      "9455-4169 QI",
+      "Interest & Financing",
+      "FY2025",
+      71.35
+    ],
+    [
+      "9455-4169 QI",
+      "Administrative",
+      "FY2024",
+      3085.0
+    ],
+    [
+      "9455-4169 QI",
+      "Interest & Financing",
+      "FY2024",
+      163.14
+    ],
+    [
+      "9455-4169 QI",
+      "Administrative",
+      "FY2023",
+      4995.0
+    ],
+    [
+      "9455-4169 QI",
+      "Interest & Financing",
+      "FY2023",
+      53.55
+    ],
+    [
+      "9455-4177 QI",
+      "Administrative",
+      "FY2025",
+      2944.0
+    ],
+    [
+      "9455-4177 QI",
+      "Interest & Financing",
+      "FY2025",
+      71.31
+    ],
+    [
+      "9455-4177 QI",
+      "Administrative",
+      "FY2024",
+      2797.0
+    ],
+    [
+      "9455-4177 QI",
+      "Interest & Financing",
+      "FY2024",
+      148.11
+    ],
+    [
+      "9455-4177 QI",
+      "Administrative",
+      "FY2023",
+      5196.0
+    ],
+    [
+      "9455-4177 QI",
+      "Interest & Financing",
+      "FY2023",
+      53.55
+    ],
+    [
+      "9455-4201 QI",
+      "Investment & Other Income",
+      "FY2025",
+      -673859.71
+    ],
+    [
+      "9455-4201 QI",
+      "Administrative",
+      "FY2025",
+      12508.63
+    ],
+    [
+      "9455-4201 QI",
+      "Interest & Financing",
+      "FY2025",
+      89815.85
+    ],
+    [
+      "9455-4201 QI",
+      "Investment & Other Income",
+      "FY2024",
+      -1569420.99
+    ],
+    [
+      "9455-4201 QI",
+      "Administrative",
+      "FY2024",
+      2956.0
+    ],
+    [
+      "9455-4201 QI",
+      "Interest & Financing",
+      "FY2024",
+      79366.3
+    ],
+    [
+      "9455-4201 QI",
+      "Administrative",
+      "FY2023",
+      2823.0
+    ],
+    [
+      "9455-4201 QI",
+      "Interest & Financing",
+      "FY2023",
+      146.62
+    ],
+    [
+      "9108-6876 QI",
+      "Other Operating",
+      "FY2025",
+      220492.18
+    ],
+    [
+      "9108-6876 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      621319.65
+    ],
+    [
+      "9108-6876 QI",
+      "COGS",
+      "FY2025",
+      253612.21
+    ],
+    [
+      "9108-6876 QI",
+      "Administrative",
+      "FY2025",
+      168226.05
+    ],
+    [
+      "9108-6876 QI",
+      "Interest & Financing",
+      "FY2025",
+      92484.47
+    ],
+    [
+      "9108-6876 QI",
+      "Amortization",
+      "FY2025",
+      196184.0
+    ],
+    [
+      "9108-6876 QI",
+      "Operating Revenue",
+      "FY2025",
+      -1845734.44
+    ],
+    [
+      "9108-6876 QI",
+      "Investment & Other Income",
+      "FY2025",
+      -773623.08
+    ],
+    [
+      "9108-6876 QI",
+      "Occupancy",
+      "FY2025",
+      293846.95
+    ],
+    [
+      "9108-6876 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      265493.63
+    ],
+    [
+      "9108-6876 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      191530.24
+    ],
+    [
+      "9108-6876 QI",
+      "Income Tax",
+      "FY2025",
+      11587.0
+    ],
+    [
+      "9108-6876 QI",
+      "Other Operating",
+      "FY2024",
+      93057.11
+    ],
+    [
+      "9108-6876 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      528052.08
+    ],
+    [
+      "9108-6876 QI",
+      "COGS",
+      "FY2024",
+      116416.16
+    ],
+    [
+      "9108-6876 QI",
+      "Administrative",
+      "FY2024",
+      146015.91
+    ],
+    [
+      "9108-6876 QI",
+      "Interest & Financing",
+      "FY2024",
+      95218.77
+    ],
+    [
+      "9108-6876 QI",
+      "Amortization",
+      "FY2024",
+      195095.0
+    ],
+    [
+      "9108-6876 QI",
+      "Operating Revenue",
+      "FY2024",
+      -1846103.64
+    ],
+    [
+      "9108-6876 QI",
+      "Investment & Other Income",
+      "FY2024",
+      -277628.05
+    ],
+    [
+      "9108-6876 QI",
+      "Management Fees (Interco)",
+      "FY2024",
+      398.98
+    ],
+    [
+      "9108-6876 QI",
+      "Occupancy",
+      "FY2024",
+      262708.89
+    ],
+    [
+      "9108-6876 QI",
+      "Marketing & Entertainment",
+      "FY2024",
+      263448.71
+    ],
+    [
+      "9108-6876 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      259227.76
+    ],
+    [
+      "9108-6876 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      406354.65
+    ],
+    [
+      "9108-6876 QI",
+      "COGS",
+      "FY2023",
+      77648.91
+    ],
+    [
+      "9108-6876 QI",
+      "Administrative",
+      "FY2023",
+      102761.37
+    ],
+    [
+      "9108-6876 QI",
+      "Interest & Financing",
+      "FY2023",
+      78647.43
+    ],
+    [
+      "9108-6876 QI",
+      "Amortization",
+      "FY2023",
+      144978.0
+    ],
+    [
+      "9108-6876 QI",
+      "Operating Revenue",
+      "FY2023",
+      -1787344.57
+    ],
+    [
+      "9108-6876 QI",
+      "Occupancy",
+      "FY2023",
+      246909.77
+    ],
+    [
+      "9108-6876 QI",
+      "Marketing & Entertainment",
+      "FY2023",
+      199861.29
+    ],
+    [
+      "9108-6876 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      338592.34
+    ],
+    [
+      "N/A_BisGur",
+      "Operating Revenue",
+      "FY2025",
+      -95567.31
+    ],
+    [
+      "N/A_BisGur",
+      "Management Fees (Interco)",
+      "FY2025",
+      -4000.0
+    ],
+    [
+      "N/A_BisGur",
+      "Payroll & Benefits",
+      "FY2025",
+      49571.73
+    ],
+    [
+      "N/A_BisGur",
+      "Administrative",
+      "FY2025",
+      9462.88
+    ],
+    [
+      "N/A_BisGur",
+      "Interest & Financing",
+      "FY2025",
+      2968.54
+    ],
+    [
+      "N/A_BisGur",
+      "Amortization",
+      "FY2025",
+      11858.0
+    ],
+    [
+      "N/A_BisGur",
+      "COGS",
+      "FY2025",
+      26947.11
+    ],
+    [
+      "N/A_BisGur",
+      "Occupancy",
+      "FY2025",
+      4362.05
+    ],
+    [
+      "N/A_BisGur",
+      "Repairs & Maintenance",
+      "FY2025",
+      9729.89
+    ],
+    [
+      "N/A_BisGur",
+      "Marketing & Entertainment",
+      "FY2025",
+      14786.0
+    ],
+    [
+      "N/A_BisGur",
+      "Management Fees (Interco)",
+      "FY2024",
+      -25000.0
+    ],
+    [
+      "N/A_BisGur",
+      "Administrative",
+      "FY2024",
+      11691.11
+    ],
+    [
+      "N/A_BisGur",
+      "Interest & Financing",
+      "FY2024",
+      353.66
+    ],
+    [
+      "N/A_BisGur",
+      "Occupancy",
+      "FY2024",
+      2978.98
+    ],
+    [
+      "N/A_BisGur",
+      "Repairs & Maintenance",
+      "FY2024",
+      1405.28
+    ],
+    [
+      "N/A_BisGur",
+      "Marketing & Entertainment",
+      "FY2024",
+      31.2
+    ],
+    [
+      "N/A_BisGur",
+      "Management Fees (Interco)",
+      "FY2023",
+      -120000.0
+    ],
+    [
+      "N/A_BisGur",
+      "Administrative",
+      "FY2023",
+      9970.26
+    ],
+    [
+      "N/A_BisGur",
+      "Interest & Financing",
+      "FY2023",
+      80.49
+    ],
+    [
+      "N/A_BisGur",
+      "Occupancy",
+      "FY2023",
+      3536.61
+    ],
+    [
+      "N/A_BisGur",
+      "Repairs & Maintenance",
+      "FY2023",
+      659.65
+    ],
+    [
+      "N/A_BisGur",
+      "Marketing & Entertainment",
+      "FY2023",
+      93.6
+    ],
+    [
+      "9096-0436 QI",
+      "Operating Revenue",
+      "FY2025",
+      -182159.16
+    ],
+    [
+      "9096-0436 QI",
+      "Other Operating",
+      "FY2025",
+      27832.1
+    ],
+    [
+      "9096-0436 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      69042.93
+    ],
+    [
+      "9096-0436 QI",
+      "Management Fees (Interco)",
+      "FY2025",
+      -63372.0
+    ],
+    [
+      "9096-0436 QI",
+      "COGS",
+      "FY2025",
+      21629.4
+    ],
+    [
+      "9096-0436 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      3911.77
+    ],
+    [
+      "9096-0436 QI",
+      "Occupancy",
+      "FY2025",
+      84249.49
+    ],
+    [
+      "9096-0436 QI",
+      "Administrative",
+      "FY2025",
+      31662.59
+    ],
+    [
+      "9096-0436 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      3035.5
+    ],
+    [
+      "9096-0436 QI",
+      "Amortization",
+      "FY2025",
+      16179.0
+    ],
+    [
+      "9096-0436 QI",
+      "Interest & Financing",
+      "FY2025",
+      7029.13
+    ],
+    [
+      "9096-0436 QI",
+      "Operating Revenue",
+      "FY2024",
+      -252814.41
+    ],
+    [
+      "9096-0436 QI",
+      "Other Operating",
+      "FY2024",
+      25803.7
+    ],
+    [
+      "9096-0436 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      94213.15
+    ],
+    [
+      "9096-0436 QI",
+      "Management Fees (Interco)",
+      "FY2024",
+      -105000.0
+    ],
+    [
+      "9096-0436 QI",
+      "COGS",
+      "FY2024",
+      42360.83
+    ],
+    [
+      "9096-0436 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      15237.12
+    ],
+    [
+      "9096-0436 QI",
+      "Occupancy",
+      "FY2024",
+      84280.23
+    ],
+    [
+      "9096-0436 QI",
+      "Administrative",
+      "FY2024",
+      39485.9
+    ],
+    [
+      "9096-0436 QI",
+      "Marketing & Entertainment",
+      "FY2024",
+      30521.91
+    ],
+    [
+      "9096-0436 QI",
+      "Amortization",
+      "FY2024",
+      7464.0
+    ],
+    [
+      "9096-0436 QI",
+      "Interest & Financing",
+      "FY2024",
+      7661.21
+    ],
+    [
+      "9096-0436 QI",
+      "Income Tax",
+      "FY2024",
+      1145.0
+    ],
+    [
+      "9096-0436 QI",
+      "Operating Revenue",
+      "FY2023",
+      -1040169.25
+    ],
+    [
+      "9096-0436 QI",
+      "Other Operating",
+      "FY2023",
+      24267.6
+    ],
+    [
+      "9096-0436 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      335260.06
+    ],
+    [
+      "9096-0436 QI",
+      "Management Fees (Interco)",
+      "FY2023",
+      12000.0
+    ],
+    [
+      "9096-0436 QI",
+      "COGS",
+      "FY2023",
+      306127.7
+    ],
+    [
+      "9096-0436 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      28545.56
+    ],
+    [
+      "9096-0436 QI",
+      "Occupancy",
+      "FY2023",
+      84158.63
+    ],
+    [
+      "9096-0436 QI",
+      "Administrative",
+      "FY2023",
+      40897.33
+    ],
+    [
+      "9096-0436 QI",
+      "Marketing & Entertainment",
+      "FY2023",
+      155731.54
+    ],
+    [
+      "9096-0436 QI",
+      "Amortization",
+      "FY2023",
+      6720.0
+    ],
+    [
+      "9096-0436 QI",
+      "Interest & Financing",
+      "FY2023",
+      11168.8
+    ],
+    [
+      "9096-0436 QI",
+      "Income Tax",
+      "FY2023",
+      4347.0
+    ],
+    [
+      "9504-7510 QI",
+      "Management Fees (Interco)",
+      "FY2025",
+      -36500.0
+    ],
+    [
+      "9504-7510 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      682935.3
+    ],
+    [
+      "9504-7510 QI",
+      "Amortization",
+      "FY2025",
+      89528.25
+    ],
+    [
+      "9504-7510 QI",
+      "Interest & Financing",
+      "FY2025",
+      34311.46
+    ],
+    [
+      "9504-7510 QI",
+      "Operating Revenue",
+      "FY2025",
+      -1276087.3
+    ],
+    [
+      "9504-7510 QI",
+      "Administrative",
+      "FY2025",
+      119684.05
+    ],
+    [
+      "9504-7510 QI",
+      "COGS",
+      "FY2025",
+      461523.69
+    ],
+    [
+      "9504-7510 QI",
+      "Occupancy",
+      "FY2025",
+      70350.57
+    ],
+    [
+      "9504-7510 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      85236.12
+    ],
+    [
+      "9504-7510 QI",
+      "Other Operating",
+      "FY2025",
+      25179.13
+    ],
+    [
+      "9504-7510 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      74422.26
+    ],
+    [
+      "9504-7510 QI",
+      "Interest & Financing",
+      "FY2024",
+      47.32
+    ],
+    [
+      "9504-7510 QI",
+      "Administrative",
+      "FY2024",
+      6971.72
+    ],
+    [
+      "9504-7510 QI",
+      "Occupancy",
+      "FY2024",
+      1030.5
+    ],
+    [
+      "9525-2854 QI",
+      "Operating Revenue",
+      "FY2025",
+      -60617.22
+    ],
+    [
+      "9525-2854 QI",
+      "Administrative",
+      "FY2025",
+      7827.94
+    ],
+    [
+      "9525-2854 QI",
+      "COGS",
+      "FY2025",
+      28798.6
+    ],
+    [
+      "9525-2854 QI",
+      "Interest & Financing",
+      "FY2025",
+      160.0
+    ],
+    [
+      "9525-2854 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      17017.8
+    ],
+    [
+      "9525-2854 QI",
+      "Occupancy",
+      "FY2025",
+      8.15
+    ],
+    [
+      "9525-2854 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      5393.52
+    ],
+    [
+      "9525-2854 QI",
+      "Other Operating",
+      "FY2025",
+      1690.87
+    ],
+    [
+      "9525-2854 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      3819.0
+    ],
+    [
+      "9525-2854 QI",
+      "Amortization",
+      "FY2025",
+      1623.0
+    ],
+    [
+      "9366-1049 QI",
+      "Operating Revenue",
+      "FY2025",
+      -4020097.09
+    ],
+    [
+      "9366-1049 QI",
+      "Other Operating",
+      "FY2025",
+      36589.58
+    ],
+    [
+      "9366-1049 QI",
+      "Investment & Other Income",
+      "FY2025",
+      -21238.18
+    ],
+    [
+      "9366-1049 QI",
+      "COGS",
+      "FY2025",
+      1134014.92
+    ],
+    [
+      "9366-1049 QI",
+      "Administrative",
+      "FY2025",
+      128437.63
+    ],
+    [
+      "9366-1049 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      1648002.47
+    ],
+    [
+      "9366-1049 QI",
+      "Occupancy",
+      "FY2025",
+      285429.57
+    ],
+    [
+      "9366-1049 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      112954.41
+    ],
+    [
+      "9366-1049 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      152125.33
+    ],
+    [
+      "9366-1049 QI",
+      "Interest & Financing",
+      "FY2025",
+      119756.18
+    ],
+    [
+      "9366-1049 QI",
+      "Amortization",
+      "FY2025",
+      115151.0
+    ],
+    [
+      "9366-1049 QI",
+      "Income Tax",
+      "FY2025",
+      55522.0
+    ],
+    [
+      "9366-1049 QI",
+      "Operating Revenue",
+      "FY2024",
+      -3945668.63
+    ],
+    [
+      "9366-1049 QI",
+      "Other Operating",
+      "FY2024",
+      51950.17
+    ],
+    [
+      "9366-1049 QI",
+      "COGS",
+      "FY2024",
+      1336954.0
+    ],
+    [
+      "9366-1049 QI",
+      "Administrative",
+      "FY2024",
+      104164.1
+    ],
+    [
+      "9366-1049 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      1410408.29
+    ],
+    [
+      "9366-1049 QI",
+      "Occupancy",
+      "FY2024",
+      204074.66
+    ],
+    [
+      "9366-1049 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      162786.02
+    ],
+    [
+      "9366-1049 QI",
+      "Marketing & Entertainment",
+      "FY2024",
+      74927.98
+    ],
+    [
+      "9366-1049 QI",
+      "Interest & Financing",
+      "FY2024",
+      102454.37
+    ],
+    [
+      "9366-1049 QI",
+      "Amortization",
+      "FY2024",
+      75441.0
+    ],
+    [
+      "9366-1049 QI",
+      "Income Tax",
+      "FY2024",
+      12250.0
+    ],
+    [
+      "9366-1049 QI",
+      "Operating Revenue",
+      "FY2023",
+      -4192108.18
+    ],
+    [
+      "9366-1049 QI",
+      "Other Operating",
+      "FY2023",
+      47186.32
+    ],
+    [
+      "9366-1049 QI",
+      "COGS",
+      "FY2023",
+      1435652.25
+    ],
+    [
+      "9366-1049 QI",
+      "Administrative",
+      "FY2023",
+      89534.44
+    ],
+    [
+      "9366-1049 QI",
+      "Management Fees (Interco)",
+      "FY2023",
+      28000.0
+    ],
+    [
+      "9366-1049 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      1565414.79
+    ],
+    [
+      "9366-1049 QI",
+      "Occupancy",
+      "FY2023",
+      159546.21
+    ],
+    [
+      "9366-1049 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      110590.5
+    ],
+    [
+      "9366-1049 QI",
+      "Marketing & Entertainment",
+      "FY2023",
+      102861.78
+    ],
+    [
+      "9366-1049 QI",
+      "Interest & Financing",
+      "FY2023",
+      95846.65
+    ],
+    [
+      "9366-1049 QI",
+      "Amortization",
+      "FY2023",
+      45876.0
+    ],
+    [
+      "9366-1049 QI",
+      "Income Tax",
+      "FY2023",
+      83963.0
+    ],
+    [
+      "9098-0558 QI",
+      "Operating Revenue",
+      "FY2025",
+      -1606736.08
+    ],
+    [
+      "9098-0558 QI",
+      "Other Operating",
+      "FY2025",
+      11810.27
+    ],
+    [
+      "9098-0558 QI",
+      "Administrative",
+      "FY2025",
+      83140.49
+    ],
+    [
+      "9098-0558 QI",
+      "Interest & Financing",
+      "FY2025",
+      35063.04
+    ],
+    [
+      "9098-0558 QI",
+      "Management Fees (Interco)",
+      "FY2025",
+      51872.0
+    ],
+    [
+      "9098-0558 QI",
+      "COGS",
+      "FY2025",
+      712190.69
+    ],
+    [
+      "9098-0558 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      371058.72
+    ],
+    [
+      "9098-0558 QI",
+      "Occupancy",
+      "FY2025",
+      63879.98
+    ],
+    [
+      "9098-0558 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      14521.69
+    ],
+    [
+      "9098-0558 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      267190.19
+    ],
+    [
+      "9098-0558 QI",
+      "Amortization",
+      "FY2025",
+      15416.0
+    ],
+    [
+      "9098-0558 QI",
+      "Operating Revenue",
+      "FY2024",
+      -1854065.71
+    ],
+    [
+      "9098-0558 QI",
+      "Other Operating",
+      "FY2024",
+      14821.35
+    ],
+    [
+      "9098-0558 QI",
+      "Administrative",
+      "FY2024",
+      54056.48
+    ],
+    [
+      "9098-0558 QI",
+      "Interest & Financing",
+      "FY2024",
+      30851.77
+    ],
+    [
+      "9098-0558 QI",
+      "COGS",
+      "FY2024",
+      862520.42
+    ],
+    [
+      "9098-0558 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      360373.72
+    ],
+    [
+      "9098-0558 QI",
+      "Occupancy",
+      "FY2024",
+      84572.03
+    ],
+    [
+      "9098-0558 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      27503.48
+    ],
+    [
+      "9098-0558 QI",
+      "Marketing & Entertainment",
+      "FY2024",
+      371929.89
+    ],
+    [
+      "9098-0558 QI",
+      "Amortization",
+      "FY2024",
+      11293.0
+    ],
+    [
+      "9098-0558 QI",
+      "Income Tax",
+      "FY2024",
+      4426.0
+    ],
+    [
+      "9098-0558 QI",
+      "Operating Revenue",
+      "FY2023",
+      -1793621.56
+    ],
+    [
+      "9098-0558 QI",
+      "Other Operating",
+      "FY2023",
+      14534.84
+    ],
+    [
+      "9098-0558 QI",
+      "Administrative",
+      "FY2023",
+      65906.69
+    ],
+    [
+      "9098-0558 QI",
+      "Interest & Financing",
+      "FY2023",
+      31042.81
+    ],
+    [
+      "9098-0558 QI",
+      "Management Fees (Interco)",
+      "FY2023",
+      96000.0
+    ],
+    [
+      "9098-0558 QI",
+      "COGS",
+      "FY2023",
+      745956.71
+    ],
+    [
+      "9098-0558 QI",
+      "Payroll & Benefits",
+      "FY2023",
+      430360.81
+    ],
+    [
+      "9098-0558 QI",
+      "Occupancy",
+      "FY2023",
+      63947.25
+    ],
+    [
+      "9098-0558 QI",
+      "Repairs & Maintenance",
+      "FY2023",
+      20527.86
+    ],
+    [
+      "9098-0558 QI",
+      "Marketing & Entertainment",
+      "FY2023",
+      230794.19
+    ],
+    [
+      "9098-0558 QI",
+      "Amortization",
+      "FY2023",
+      7171.0
+    ],
+    [
+      "9098-0558 QI",
+      "Income Tax",
+      "FY2023",
+      11162.0
+    ],
+    [
+      "2749-8567 QI",
+      "Other Operating",
+      "FY2025",
+      19007.52
+    ],
+    [
+      "2749-8567 QI",
+      "Operating Revenue",
+      "FY2025",
+      -109765.32
+    ],
+    [
+      "2749-8567 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      194.47
+    ],
+    [
+      "2749-8567 QI",
+      "Management Fees (Interco)",
+      "FY2025",
+      36000.0
+    ],
+    [
+      "2749-8567 QI",
+      "Administrative",
+      "FY2025",
+      7991.46
+    ],
+    [
+      "2749-8567 QI",
+      "Amortization",
+      "FY2025",
+      20030.0
+    ],
+    [
+      "2749-8567 QI",
+      "Interest & Financing",
+      "FY2025",
+      461.73
+    ],
+    [
+      "2749-8567 QI",
+      "Income Tax",
+      "FY2025",
+      4196.0
+    ],
+    [
+      "2749-8567 QI",
+      "Other Operating",
+      "FY2024",
+      19007.52
+    ],
+    [
+      "2749-8567 QI",
+      "Operating Revenue",
+      "FY2024",
+      -109765.32
+    ],
+    [
+      "2749-8567 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      4960.18
+    ],
+    [
+      "2749-8567 QI",
+      "Management Fees (Interco)",
+      "FY2024",
+      25000.0
+    ],
+    [
+      "2749-8567 QI",
+      "Administrative",
+      "FY2024",
+      12837.77
+    ],
+    [
+      "2749-8567 QI",
+      "Amortization",
+      "FY2024",
+      22645.0
+    ],
+    [
+      "2749-8567 QI",
+      "Interest & Financing",
+      "FY2024",
+      153.5
+    ],
+    [
+      "2749-8567 QI",
+      "Income Tax",
+      "FY2024",
+      3126.0
+    ],
+    [
+      "2749-8567 QI",
+      "Other Operating",
+      "FY2023",
+      829.6
+    ],
+    [
+      "2749-8567 QI",
+      "Operating Revenue",
+      "FY2023",
+      -84565.2
+    ],
+    [
+      "2749-8567 QI",
+      "Management Fees (Interco)",
+      "FY2023",
+      24000.0
+    ],
+    [
+      "2749-8567 QI",
+      "Administrative",
+      "FY2023",
+      8780.15
+    ],
+    [
+      "2749-8567 QI",
+      "Amortization",
+      "FY2023",
+      25230.0
+    ],
+    [
+      "2749-8567 QI",
+      "Interest & Financing",
+      "FY2023",
+      123.98
+    ],
+    [
+      "2749-8567 QI",
+      "Income Tax",
+      "FY2023",
+      3017.0
+    ],
+    [
+      "N/A_SanSan",
+      "Operating Revenue",
+      "FY2025",
+      -72000.0
+    ],
+    [
+      "N/A_SanSan",
+      "Interest & Financing",
+      "FY2025",
+      3002.35
+    ],
+    [
+      "N/A_SanSan",
+      "Amortization",
+      "FY2025",
+      10807.0
+    ],
+    [
+      "N/A_SanSan",
+      "Occupancy",
+      "FY2025",
+      69715.82
+    ],
+    [
+      "N/A_SanSan",
+      "Administrative",
+      "FY2025",
+      4296.0
+    ],
+    [
+      "N/A_SanSan",
+      "Operating Revenue",
+      "FY2024",
+      -72001.0
+    ],
+    [
+      "N/A_SanSan",
+      "Interest & Financing",
+      "FY2024",
+      340.62
+    ],
+    [
+      "N/A_SanSan",
+      "Amortization",
+      "FY2024",
+      11257.0
+    ],
+    [
+      "N/A_SanSan",
+      "Occupancy",
+      "FY2024",
+      69340.76
+    ],
+    [
+      "N/A_SanSan",
+      "Administrative",
+      "FY2024",
+      2203.93
+    ],
+    [
+      "N/A_SanSan",
+      "Operating Revenue",
+      "FY2023",
+      -72000.0
+    ],
+    [
+      "N/A_SanSan",
+      "Interest & Financing",
+      "FY2023",
+      2422.9
+    ],
+    [
+      "N/A_SanSan",
+      "Amortization",
+      "FY2023",
+      11458.0
+    ],
+    [
+      "N/A_SanSan",
+      "Occupancy",
+      "FY2023",
+      67298.08
+    ],
+    [
+      "N/A_SanSan",
+      "Administrative",
+      "FY2023",
+      24671.28
+    ]
+  ],
+  "dim_entity_rows": [
+    [
+      "9357-7427 QI",
+      "9357-7427 Qu\u00e9bec Inc.",
+      "HoldCo"
+    ],
+    [
+      "9366-1676 QI",
+      "9366-1676 Qu\u00e9bec Inc.",
+      "HoldCo"
+    ],
+    [
+      "9425-4547 QI",
+      "9425-4547 Qu\u00e9bec Inc.",
+      "HoldCo"
+    ],
+    [
+      "9455-4169 QI",
+      "9455-4169 Qu\u00e9bec Inc.",
+      "HoldCo"
+    ],
+    [
+      "9455-4177 QI",
+      "9455-4177 Qu\u00e9bec Inc.",
+      "HoldCo"
+    ],
+    [
+      "9455-4201 QI",
+      "Sandhu Holdco",
+      "HoldCo"
+    ],
+    [
+      "9108-6876 QI",
+      "Auberge St Louis",
+      "Hospitality OpCo"
+    ],
+    [
+      "N/A_BisGur",
+      "Bistro Guru Inc.",
+      "Restaurant OpCo"
+    ],
+    [
+      "9096-0436 QI",
+      "Lobby Lounge",
+      "Restaurant OpCo"
+    ],
+    [
+      "9504-7510 QI",
+      "Restaurant Heritage",
+      "Restaurant OpCo"
+    ],
+    [
+      "9455-8236 QI",
+      "Restaurant IndiaRosa 2",
+      "Restaurant OpCo"
+    ],
+    [
+      "9525-2854 QI",
+      "Restaurant IndiaRosa 3",
+      "Restaurant OpCo"
+    ],
+    [
+      "9366-1049 QI",
+      "Restaurant IndiaRosa 1",
+      "Restaurant OpCo"
+    ],
+    [
+      "9098-0558 QI",
+      "Restaurant Sandhu",
+      "Restaurant OpCo"
+    ],
+    [
+      "2749-8567 QI",
+      "Sandhu Leasing",
+      "RealCo"
+    ],
+    [
+      "N/A_SanSan",
+      "Sandhu & Sandhu Enr.",
+      "RealCo"
+    ]
+  ]
+}

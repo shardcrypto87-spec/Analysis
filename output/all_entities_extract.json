@@ -1,0 +1,812 @@
+{
+  "9357-7427 QI": {
+    "prefix": "935_742",
+    "entity_name": "9357-7427 Qu\u00e9bec Inc.",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "COGS": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Other Operating": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 477.24,
+        "Occupancy": 0.0,
+        "Administrative": 2597.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 72.58,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "COGS": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Other Operating": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 358.94,
+        "Occupancy": 0.0,
+        "Administrative": 2329.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 47.81,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Operating Revenue": -31929.0,
+        "UNCATEGORIZED": 0.0,
+        "COGS": 29026.44,
+        "Marketing & Entertainment": 0.0,
+        "Other Operating": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 90.0,
+        "Occupancy": 0.0,
+        "Administrative": 27273.26,
+        "Amortization": 0.0,
+        "Interest & Financing": 71.4,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -3146.82,
+      "FY2024": -2735.75,
+      "FY2023": -24532.1
+    },
+    "uncategorized": [],
+    "validation_benchmark": -3146.82,
+    "validation_match": true
+  },
+  "9366-1676 QI": {
+    "prefix": "936_167",
+    "entity_name": "9366-1676 Qu\u00e9bec Inc.",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": -190152.12,
+        "Management Fees (Interco)": 0.0,
+        "Other Operating": 0.0,
+        "Investment & Other Income": 0.0,
+        "Interest & Financing": 396762.01999999996,
+        "Amortization": 204136.0,
+        "Administrative": 215463.66000000006,
+        "Occupancy": 33717.57,
+        "Repairs & Maintenance": 425.0,
+        "Marketing & Entertainment": 0.0,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": -188197.75,
+        "Management Fees (Interco)": 0.0,
+        "Other Operating": 0.0,
+        "Investment & Other Income": 0.0,
+        "Interest & Financing": 219534.62,
+        "Amortization": 94472.0,
+        "Administrative": 152117.58000000005,
+        "Occupancy": 16431.97,
+        "Repairs & Maintenance": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Operating Revenue": -220172.35,
+        "Management Fees (Interco)": -12000.0,
+        "Other Operating": 0.0,
+        "Investment & Other Income": 0.0,
+        "Interest & Financing": 80807.78,
+        "Amortization": 94975.0,
+        "Administrative": 121093.68000000001,
+        "Occupancy": 13011.85,
+        "Repairs & Maintenance": 7000.0,
+        "Marketing & Entertainment": 0.0,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -660352.13,
+      "FY2024": -294358.42,
+      "FY2023": -84715.96
+    },
+    "uncategorized": [],
+    "validation_benchmark": -660352.13,
+    "validation_match": true
+  },
+  "9425-4547 QI": {
+    "prefix": "942_454",
+    "entity_name": "9425-4547 Qu\u00e9bec Inc.",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": -273186.0,
+        "Management Fees (Interco)": 0.0,
+        "Investment & Other Income": -84146.62000000001,
+        "Interest & Financing": 147838.99999999997,
+        "UNCATEGORIZED": 0.0,
+        "Amortization": 14870.0,
+        "Administrative": 81647.34999999999,
+        "Repairs & Maintenance": 0.0,
+        "Occupancy": 8110.21,
+        "Marketing & Entertainment": 0.0,
+        "Other Operating": 0.0,
+        "Income Tax": 14359.0
+      },
+      "FY2024": {
+        "Operating Revenue": -247975.0,
+        "Management Fees (Interco)": 0.0,
+        "Investment & Other Income": -62108.84000000001,
+        "Interest & Financing": 108814.51000000001,
+        "UNCATEGORIZED": 0.0,
+        "Amortization": 15473.0,
+        "Administrative": 84635.60000000003,
+        "Repairs & Maintenance": 0.0,
+        "Occupancy": 6455.93,
+        "Marketing & Entertainment": 0.0,
+        "Other Operating": 0.0,
+        "Income Tax": 13363.0
+      },
+      "FY2023": {
+        "Operating Revenue": -234180.0,
+        "Management Fees (Interco)": 12000.0,
+        "Investment & Other Income": 5374.62,
+        "Interest & Financing": 55542.00000000001,
+        "UNCATEGORIZED": 0.0,
+        "Amortization": 15710.0,
+        "Administrative": 88267.41,
+        "Repairs & Maintenance": 0.0,
+        "Occupancy": 5719.820000000001,
+        "Marketing & Entertainment": 0.0,
+        "Other Operating": 0.0,
+        "Income Tax": 13857.0
+      }
+    },
+    "net_income": {
+      "FY2025": 90507.06,
+      "FY2024": 81341.8,
+      "FY2023": 37709.15
+    },
+    "uncategorized": [],
+    "validation_benchmark": 90507.06,
+    "validation_match": true
+  },
+  "9455-4169 QI": {
+    "prefix": "945_416",
+    "entity_name": "9455-4169 Qu\u00e9bec Inc.",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Administrative": 2994.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 71.35,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Administrative": 3085.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 163.14,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Administrative": 4995.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 53.55,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -3065.35,
+      "FY2024": -3248.14,
+      "FY2023": -5048.55
+    },
+    "uncategorized": [],
+    "validation_benchmark": -3065.35,
+    "validation_match": true
+  },
+  "9455-4177 QI": {
+    "prefix": "945_417",
+    "entity_name": "9455-4177 Qu\u00e9bec Inc.",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Administrative": 2944.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 71.31,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Administrative": 2797.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 148.11,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Administrative": 5196.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 53.55,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -3015.31,
+      "FY2024": -2945.11,
+      "FY2023": -5249.55
+    },
+    "uncategorized": [],
+    "validation_benchmark": -3015.31,
+    "validation_match": true
+  },
+  "9455-4201 QI": {
+    "prefix": "945_420",
+    "entity_name": "Sandhu Holdco",
+    "totals": {
+      "FY2025": {
+        "Investment & Other Income": -673859.71,
+        "Operating Revenue": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Administrative": 12508.63,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 89815.85,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Investment & Other Income": -1569420.99,
+        "Operating Revenue": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Administrative": 2956.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 79366.3,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Investment & Other Income": 0.0,
+        "Operating Revenue": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Administrative": 2823.0,
+        "Repairs & Maintenance": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 146.62,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": 571535.23,
+      "FY2024": 1487098.69,
+      "FY2023": -2969.62
+    },
+    "uncategorized": [],
+    "validation_benchmark": 571535.23,
+    "validation_match": true
+  },
+  "9108-6876 QI": {
+    "prefix": "Aub_Stl",
+    "entity_name": "Auberge St Louis",
+    "totals": {
+      "FY2025": {
+        "Other Operating": 220492.18000000002,
+        "Payroll & Benefits": 621319.65,
+        "COGS": 253612.21000000002,
+        "Administrative": 168226.05,
+        "Interest & Financing": 92484.47,
+        "Amortization": 196184.0,
+        "Operating Revenue": -1845734.44,
+        "Investment & Other Income": -773623.08,
+        "Management Fees (Interco)": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 293846.95,
+        "Marketing & Entertainment": 265493.63,
+        "Repairs & Maintenance": 191530.24,
+        "Income Tax": 11587.0
+      },
+      "FY2024": {
+        "Other Operating": 93057.11000000002,
+        "Payroll & Benefits": 528052.08,
+        "COGS": 116416.16,
+        "Administrative": 146015.91,
+        "Interest & Financing": 95218.77,
+        "Amortization": 195095.0,
+        "Operating Revenue": -1846103.64,
+        "Investment & Other Income": -277628.05,
+        "Management Fees (Interco)": 398.98,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 262708.89,
+        "Marketing & Entertainment": 263448.70999999996,
+        "Repairs & Maintenance": 259227.76,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Other Operating": 0.0,
+        "Payroll & Benefits": 406354.65,
+        "COGS": 77648.91,
+        "Administrative": 102761.37,
+        "Interest & Financing": 78647.43,
+        "Amortization": 144978.0,
+        "Operating Revenue": -1787344.5699999998,
+        "Investment & Other Income": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 246909.77,
+        "Marketing & Entertainment": 199861.29,
+        "Repairs & Maintenance": 338592.34,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": 304581.14,
+      "FY2024": 164092.32,
+      "FY2023": 191590.81
+    },
+    "uncategorized": [],
+    "validation_benchmark": 304581.14,
+    "validation_match": true
+  },
+  "N/A_BisGur": {
+    "prefix": "Bis_Gur",
+    "entity_name": "Bistro Guru Inc.",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": -95567.31,
+        "Other Operating": 0.0,
+        "Management Fees (Interco)": -4000.0,
+        "Payroll & Benefits": 49571.729999999996,
+        "Administrative": 9462.880000000001,
+        "Interest & Financing": 2968.54,
+        "Amortization": 11858.0,
+        "COGS": 26947.109999999997,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 4362.05,
+        "Repairs & Maintenance": 9729.89,
+        "Marketing & Entertainment": 14786.0,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": 0.0,
+        "Other Operating": 0.0,
+        "Management Fees (Interco)": -25000.0,
+        "Payroll & Benefits": 0.0,
+        "Administrative": 11691.11,
+        "Interest & Financing": 353.66,
+        "Amortization": 0.0,
+        "COGS": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 2978.98,
+        "Repairs & Maintenance": 1405.28,
+        "Marketing & Entertainment": 31.2,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Operating Revenue": 0.0,
+        "Other Operating": 0.0,
+        "Management Fees (Interco)": -120000.0,
+        "Payroll & Benefits": 0.0,
+        "Administrative": 9970.26,
+        "Interest & Financing": 80.49000000000001,
+        "Amortization": 0.0,
+        "COGS": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 3536.61,
+        "Repairs & Maintenance": 659.65,
+        "Marketing & Entertainment": 93.6,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -30118.89,
+      "FY2024": 8539.77,
+      "FY2023": 105659.39
+    },
+    "uncategorized": [],
+    "validation_benchmark": -30118.89,
+    "validation_match": true
+  },
+  "9096-0436 QI": {
+    "prefix": "Lob_Lou",
+    "entity_name": "Lobby Lounge",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": -182159.16,
+        "Other Operating": 27832.1,
+        "Investment & Other Income": 0.0,
+        "Payroll & Benefits": 69042.93000000001,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": -63372.0,
+        "COGS": 21629.4,
+        "Repairs & Maintenance": 3911.77,
+        "Occupancy": 84249.49,
+        "Administrative": 31662.59,
+        "Marketing & Entertainment": 3035.5,
+        "Amortization": 16179.0,
+        "Interest & Financing": 7029.13,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": -252814.41,
+        "Other Operating": 25803.7,
+        "Investment & Other Income": 0.0,
+        "Payroll & Benefits": 94213.15,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": -105000.0,
+        "COGS": 42360.83,
+        "Repairs & Maintenance": 15237.12,
+        "Occupancy": 84280.23,
+        "Administrative": 39485.9,
+        "Marketing & Entertainment": 30521.91,
+        "Amortization": 7464.0,
+        "Interest & Financing": 7661.21,
+        "Income Tax": 1145.0
+      },
+      "FY2023": {
+        "Operating Revenue": -1040169.25,
+        "Other Operating": 24267.6,
+        "Investment & Other Income": 0.0,
+        "Payroll & Benefits": 335260.06,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 12000.0,
+        "COGS": 306127.7,
+        "Repairs & Maintenance": 28545.56,
+        "Occupancy": 84158.63,
+        "Administrative": 40897.33,
+        "Marketing & Entertainment": 155731.54,
+        "Amortization": 6720.0,
+        "Interest & Financing": 11168.800000000001,
+        "Income Tax": 4347.0
+      }
+    },
+    "net_income": {
+      "FY2025": -19040.75,
+      "FY2024": 9641.36,
+      "FY2023": 30945.03
+    },
+    "uncategorized": [],
+    "validation_benchmark": -19040.75,
+    "validation_match": true
+  },
+  "9504-7510 QI": {
+    "prefix": "Res_Her",
+    "entity_name": "Restaurant Heritage",
+    "totals": {
+      "FY2025": {
+        "Management Fees (Interco)": -36500.0,
+        "Payroll & Benefits": 682935.3,
+        "Amortization": 89528.25,
+        "Interest & Financing": 34311.46,
+        "Operating Revenue": -1276087.3,
+        "Administrative": 119684.04999999999,
+        "COGS": 461523.68999999994,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 70350.57,
+        "Repairs & Maintenance": 85236.12,
+        "Other Operating": 25179.13,
+        "Marketing & Entertainment": 74422.26,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 47.32,
+        "Operating Revenue": 0.0,
+        "Administrative": 6971.72,
+        "COGS": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 1030.5,
+        "Repairs & Maintenance": 0.0,
+        "Other Operating": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 0.0,
+        "Amortization": 0.0,
+        "Interest & Financing": 0.0,
+        "Operating Revenue": 0.0,
+        "Administrative": 0.0,
+        "COGS": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Occupancy": 0.0,
+        "Repairs & Maintenance": 0.0,
+        "Other Operating": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -330583.53,
+      "FY2024": -8049.54,
+      "FY2023": -0.0
+    },
+    "uncategorized": [],
+    "validation_benchmark": -330583.53,
+    "validation_match": true
+  },
+  "9525-2854 QI": {
+    "prefix": "Res_In3",
+    "entity_name": "Restaurant IndiaRosa 3",
+    "totals": {
+      "FY2025": {
+        "Management Fees (Interco)": 0.0,
+        "Operating Revenue": -60617.22,
+        "UNCATEGORIZED": 0.0,
+        "Administrative": 7827.94,
+        "COGS": 28798.6,
+        "Interest & Financing": 160.0,
+        "Payroll & Benefits": 17017.800000000003,
+        "Occupancy": 8.15,
+        "Repairs & Maintenance": 5393.52,
+        "Other Operating": 1690.87,
+        "Marketing & Entertainment": 3819.0,
+        "Amortization": 1623.0,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Management Fees (Interco)": 0.0,
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Administrative": 0.0,
+        "COGS": 0.0,
+        "Interest & Financing": 0.0,
+        "Payroll & Benefits": 0.0,
+        "Occupancy": 0.0,
+        "Repairs & Maintenance": 0.0,
+        "Other Operating": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Amortization": 0.0,
+        "Income Tax": 0.0
+      },
+      "FY2023": {
+        "Management Fees (Interco)": 0.0,
+        "Operating Revenue": 0.0,
+        "UNCATEGORIZED": 0.0,
+        "Administrative": 0.0,
+        "COGS": 0.0,
+        "Interest & Financing": 0.0,
+        "Payroll & Benefits": 0.0,
+        "Occupancy": 0.0,
+        "Repairs & Maintenance": 0.0,
+        "Other Operating": 0.0,
+        "Marketing & Entertainment": 0.0,
+        "Amortization": 0.0,
+        "Income Tax": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -5721.66,
+      "FY2024": -0.0,
+      "FY2023": -0.0
+    },
+    "uncategorized": [],
+    "validation_benchmark": -5721.66,
+    "validation_match": true
+  },
+  "9366-1049 QI": {
+    "prefix": "Res_Ind",
+    "entity_name": "Restaurant IndiaRosa 1",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": -4020097.0900000003,
+        "Other Operating": 36589.58,
+        "Investment & Other Income": -21238.18,
+        "COGS": 1134014.92,
+        "Administrative": 128437.63,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 1648002.4699999997,
+        "Occupancy": 285429.57,
+        "Repairs & Maintenance": 112954.41,
+        "Marketing & Entertainment": 152125.33000000002,
+        "Interest & Financing": 119756.18000000001,
+        "Amortization": 115151.0,
+        "Income Tax": 55522.0
+      },
+      "FY2024": {
+        "Operating Revenue": -3945668.6300000004,
+        "Other Operating": 51950.17,
+        "Investment & Other Income": 0.0,
+        "COGS": 1336954.0,
+        "Administrative": 104164.1,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "Payroll & Benefits": 1410408.29,
+        "Occupancy": 204074.66,
+        "Repairs & Maintenance": 162786.02,
+        "Marketing & Entertainment": 74927.98,
+        "Interest & Financing": 102454.37,
+        "Amortization": 75441.0,
+        "Income Tax": 12250.0
+      },
+      "FY2023": {
+        "Operating Revenue": -4192108.1799999997,
+        "Other Operating": 47186.32,
+        "Investment & Other Income": 0.0,
+        "COGS": 1435652.25,
+        "Administrative": 89534.44,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 28000.0,
+        "Payroll & Benefits": 1565414.7900000003,
+        "Occupancy": 159546.21,
+        "Repairs & Maintenance": 110590.5,
+        "Marketing & Entertainment": 102861.78,
+        "Interest & Financing": 95846.65000000001,
+        "Amortization": 45876.0,
+        "Income Tax": 83963.0
+      }
+    },
+    "net_income": {
+      "FY2025": 253352.18,
+      "FY2024": 410258.04,
+      "FY2023": 427636.24
+    },
+    "uncategorized": [],
+    "validation_benchmark": 253352.18,
+    "validation_match": true
+  },
+  "9098-0558 QI": {
+    "prefix": "Res_Sa2",
+    "entity_name": "Restaurant Sandhu",
+    "totals": {
+      "FY2025": {
+        "Operating Revenue": -1606736.08,
+        "Other Operating": 11810.27,
+        "Administrative": 83140.49,
+        "Interest & Financing": 35063.04,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 51872.0,
+        "COGS": 712190.6900000001,
+        "Payroll & Benefits": 371058.72,
+        "Occupancy": 63879.979999999996,
+        "Repairs & Maintenance": 14521.69,
+        "Marketing & Entertainment": 267190.19,
+        "Amortization": 15416.0,
+        "Income Tax": 0.0
+      },
+      "FY2024": {
+        "Operating Revenue": -1854065.71,
+        "Other Operating": 14821.35,
+        "Administrative": 54056.48,
+        "Interest & Financing": 30851.77,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 0.0,
+        "COGS": 862520.4199999997,
+        "Payroll & Benefits": 360373.72,
+        "Occupancy": 84572.03,
+        "Repairs & Maintenance": 27503.48,
+        "Marketing & Entertainment": 371929.89,
+        "Amortization": 11293.0,
+        "Income Tax": 4426.0
+      },
+      "FY2023": {
+        "Operating Revenue": -1793621.56,
+        "Other Operating": 14534.84,
+        "Administrative": 65906.69,
+        "Interest & Financing": 31042.809999999998,
+        "UNCATEGORIZED": 0.0,
+        "Management Fees (Interco)": 96000.0,
+        "COGS": 745956.7099999998,
+        "Payroll & Benefits": 430360.80999999994,
+        "Occupancy": 63947.25,
+        "Repairs & Maintenance": 20527.86,
+        "Marketing & Entertainment": 230794.19,
+        "Amortization": 7171.0,
+        "Income Tax": 11162.0
+      }
+    },
+    "net_income": {
+      "FY2025": -19406.99,
+      "FY2024": 31717.57,
+      "FY2023": 76217.4
+    },
+    "uncategorized": [],
+    "validation_benchmark": -19406.99,
+    "validation_match": true
+  },
+  "2749-8567 QI": {
+    "prefix": "San_Lea",
+    "entity_name": "Sandhu Leasing",
+    "totals": {
+      "FY2025": {
+        "Other Operating": 19007.52,
+        "Operating Revenue": -109765.32,
+        "UNCATEGORIZED": 0.0,
+        "Repairs & Maintenance": 194.47,
+        "Management Fees (Interco)": 36000.0,
+        "Administrative": 7991.46,
+        "Amortization": 20030.0,
+        "Interest & Financing": 461.73,
+        "Income Tax": 4196.0
+      },
+      "FY2024": {
+        "Other Operating": 19007.52,
+        "Operating Revenue": -109765.32,
+        "UNCATEGORIZED": 0.0,
+        "Repairs & Maintenance": 4960.18,
+        "Management Fees (Interco)": 25000.0,
+        "Administrative": 12837.77,
+        "Amortization": 22645.0,
+        "Interest & Financing": 153.5,
+        "Income Tax": 3126.0
+      },
+      "FY2023": {
+        "Other Operating": 829.6,
+        "Operating Revenue": -84565.2,
+        "UNCATEGORIZED": 0.0,
+        "Repairs & Maintenance": 0.0,
+        "Management Fees (Interco)": 24000.0,
+        "Administrative": 8780.15,
+        "Amortization": 25230.0,
+        "Interest & Financing": 123.98,
+        "Income Tax": 3017.0
+      }
+    },
+    "net_income": {
+      "FY2025": 21884.14,
+      "FY2024": 22035.35,
+      "FY2023": 22584.47
+    },
+    "uncategorized": [],
+    "validation_benchmark": 21884.14,
+    "validation_match": true
+  },
+  "N/A_SanSan": {
+    "prefix": "San_San",
+    "entity_name": "Sandhu & Sandhu Enr.",
+    "totals": {
+      "FY2025": {
+        "UNCATEGORIZED": 0.0,
+        "Operating Revenue": -72000.0,
+        "Interest & Financing": 3002.35,
+        "Amortization": 10807.0,
+        "Occupancy": 69715.82,
+        "Administrative": 4296.0,
+        "Other Operating": 0.0
+      },
+      "FY2024": {
+        "UNCATEGORIZED": 0.0,
+        "Operating Revenue": -72001.0,
+        "Interest & Financing": 340.62,
+        "Amortization": 11257.0,
+        "Occupancy": 69340.76,
+        "Administrative": 2203.93,
+        "Other Operating": 0.0
+      },
+      "FY2023": {
+        "UNCATEGORIZED": 0.0,
+        "Operating Revenue": -72000.0,
+        "Interest & Financing": 2422.9,
+        "Amortization": 11458.0,
+        "Occupancy": 67298.08,
+        "Administrative": 24671.28,
+        "Other Operating": 0.0
+      }
+    },
+    "net_income": {
+      "FY2025": -15821.17,
+      "FY2024": -11141.31,
+      "FY2023": -33850.26
+    },
+    "uncategorized": [],
+    "validation_benchmark": -15821.17,
+    "validation_match": true
+  }
+}

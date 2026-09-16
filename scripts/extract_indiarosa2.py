@@ -26,6 +26,12 @@ EXCEPTIONS = {
 }
 
 
+def norm_mapno(s):
+    """Collapse all whitespace so '40.1' and '40. 1' match the same group
+    (the source WTB is inconsistent about the space after the period)."""
+    return "".join(str(s).split()) if s is not None else ""
+
+
 def load_gifi_map():
     wb = openpyxl.load_workbook(GIFI_XLSX, data_only=True)
     gifi_map = {}
@@ -41,7 +47,7 @@ def load_gifi_map():
             continue
         if started and row[0]:
             fp, mapno, cat, _ = row
-            fallback[(fp, str(mapno).strip())] = cat
+            fallback[(fp, norm_mapno(mapno))] = cat
     return gifi_map, fallback
 
 
@@ -53,8 +59,7 @@ def categorize(acct, gifi, mapno, gifi_map, fallback):
         cat = gifi_map.get(gifi_str)
         if cat:
             return cat
-    mapno_str = str(mapno).strip() if mapno is not None else ""
-    return fallback.get((FILE_PREFIX, mapno_str), "UNCATEGORIZED")
+    return fallback.get((FILE_PREFIX, norm_mapno(mapno)), "UNCATEGORIZED")
 
 
 def main():

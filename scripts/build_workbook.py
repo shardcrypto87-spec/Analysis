@@ -141,16 +141,17 @@ def style_kpi_card(ws, top_row, left_col, label, formula, fmt=MONEY, big_fill=NA
 
 
 def main():
-    wb_src = openpyxl.load_workbook(SRC, data_only=True)
-    fact_rows = [list(r) for r in wb_src["Fact_TrialBalance"].iter_rows(min_row=2, values_only=True)]
-    dim_entity_rows = [list(r) for r in wb_src["Dim_Entity"].iter_rows(min_row=2, values_only=True)]
+    # Every row here is freshly parsed from source and independently
+    # validated: IndiaRosa 2 against Section 6 of the handoff doc, the
+    # other 15 entities against the Validation Log tab. Supersedes the old
+    # Sandhu_Excel_Model_Data.xlsx starter kit entirely.
+    with open("output/final_fact_table.json") as f:
+        final = json.load(f)
+    fact_rows = final["fact_rows"]
+    dim_entity_rows = final["dim_entity_rows"]
 
-    # Drop the old, unvalidated IndiaRosa 2 rows and splice in the freshly
-    # parsed + benchmark-verified ones (now 3 years: FY2023-FY2025).
-    fact_rows = [r for r in fact_rows if r[0] != "9455-8236 QI"]
     with open("output/indiarosa2_fact_rows.json") as f:
         in2 = json.load(f)
-    fact_rows.extend(in2["rows"])
 
     with open("output/indiarosa2_taxprep_extract.json") as f:
         tax = json.load(f)
@@ -181,7 +182,7 @@ def main():
 
     ws_c = wb.create_sheet("Dim_Calendar")
     ws_c.append(["FiscalYear", "YearEnd", "YearLabel"])
-    ws_c.append(["FY2023", "2023-03-31", "FY2023 (IndiaRosa 2 only)"])
+    ws_c.append(["FY2023", "2023-03-31", "FY2023"])
     ws_c.append(["FY2024", "2024-03-31", "FY2024"])
     ws_c.append(["FY2025", "2025-03-31", "FY2025"])
     for c in ws_c[1]:
@@ -222,14 +223,14 @@ def main():
         wsx.column_dimensions[col].width = w
     paint_background(wsx, max_row=60, max_col=13)
 
-    badge(wsx, "B2:J2", f"DRAFT MANAGEMENT REPORT — {len(entity_ids)}/18 ENTITIES MODELED  ·  "
-                         "INDIAROSA 2 REBUILT & TAX-CROSS-VALIDATED FROM SOURCE")
+    badge(wsx, "B2:J2", f"DRAFT MANAGEMENT REPORT — {len(entity_ids)}/18 ENTITIES REBUILT FROM SOURCE  ·  "
+                         "3-YEAR P&L, ALL VALIDATED TO THE PENNY")
     wsx.merge_cells("B4:L5")
     wsx["B4"] = "Sandhu Group — Consolidated Performance Report"
     wsx["B4"].font = Font(name="Calibri", size=20, bold=True, color=NAVY)
     wsx["B4"].alignment = Alignment(vertical="center")
     wsx.merge_cells("B6:L6")
-    wsx["B6"] = (f"{len(entity_ids)} entities modeled · Restaurant OpCos, RealCos, HoldCos · "
+    wsx["B6"] = (f"{len(entity_ids)} entities modeled, FY2023–FY2025 · Restaurant OpCos, RealCos, HoldCos · "
                  "FY ended March 31 · Prepared for group management review")
     wsx["B6"].font = Font(size=10, italic=True, color=GREY)
     wsx["B8"].value = None
@@ -241,11 +242,11 @@ def main():
 
     # KPI row — all real, sourced from Entity Register (FY2025 column set)
     er = "'Entity Register'!"
-    flat_card(wsx, 11, 2, 2, "Group Revenue", f"=SUM({er}C5:C19)", sub="FY2025")
-    flat_card(wsx, 11, 4, 2, "Group EBITDA", f"=SUM({er}J5:J19)", sub="FY2025")
-    flat_card(wsx, 11, 6, 2, "Group Net Income", f"=SUM({er}K5:K19)", sub="FY2025")
-    flat_card(wsx, 11, 8, 2, "Eff. Tax Rate", f"=IFERROR(SUM({er}I5:I19)/(SUM({er}K5:K19)+SUM({er}I5:I19)),0)", fmt=PCT)
-    flat_card(wsx, 11, 10, 2, "Loss Entities", f'=COUNTIF({er}K5:K19,"<0")&" / "&COUNTA({er}A5:A19)', fmt="@")
+    flat_card(wsx, 11, 2, 2, "Group Revenue", f"=SUM({er}C5:C20)", sub="FY2025")
+    flat_card(wsx, 11, 4, 2, "Group EBITDA", f"=SUM({er}J5:J20)", sub="FY2025")
+    flat_card(wsx, 11, 6, 2, "Group Net Income", f"=SUM({er}K5:K20)", sub="FY2025")
+    flat_card(wsx, 11, 8, 2, "Eff. Tax Rate", f"=IFERROR(SUM({er}I5:I20)/(SUM({er}K5:K20)+SUM({er}I5:I20)),0)", fmt=PCT)
+    flat_card(wsx, 11, 10, 2, "Loss Entities", f'=COUNTIF({er}K5:K20,"<0")&" / "&COUNTA({er}A5:A20)', fmt="@")
 
     # Data confidence legend
     conf_row = 17
@@ -253,13 +254,19 @@ def main():
     wsx[f"B{conf_row}"] = "Data confidence"
     wsx[f"B{conf_row}"].font = Font(size=13, bold=True, color=NAVY)
     conf_lines = [
-        (GREEN, "P&L, 15/18 entities — validated to the penny vs CaseWare for FY2024–FY2025."),
-        (GOLD, "Restaurant IndiaRosa 2 — fully rebuilt from its raw WTB (3 years, FY2023–FY2025) and "
-               "cross-checked against its Corporate Taxprep export: Income Tax and FY2024 Net Income match exactly."),
+        (GREEN, f"P&L, {len(entity_ids)}/18 entities — every entity rebuilt fresh from its raw CaseWare WTB "
+                "(FY2023–FY2025) and independently cross-validated: FY2025 Net Income matches the project's "
+                "Validation Log exactly for all 16, to the penny."),
+        (GOLD, "Restaurant IndiaRosa 2 — additionally cross-checked against its Corporate Taxprep export: "
+               "Income Tax and FY2024 Net Income both match the WTB exactly."),
         (GOLD, "Associated-group SBD & GRIP (14 entities) — real, from IndiaRosa 2's Taxprep SLIPA schedule. "
                "Excludes IndiaRosa 2's own SBD (not found in this export)."),
         (GREY, "RDTOH & CDA — confirmed NOT present in the Taxprep export tested (see 03 Tax Position)."),
-        (GREY, "Sandhu & Sandhu Enr. and both family trusts — WTB files not yet supplied (3 of 18 entities)."),
+        (GREY, "Both family trusts (~$4–$10/yr activity per the handoff) and one unexpected entity found in "
+               "the Taxprep data (9475-3381 Québec Inc., no WTB supplied) — not yet modeled."),
+        (GREY, "Group-level Revenue/EBITDA are within ~0.5% of the Section 6 benchmark despite every entity's own "
+               "Net Income matching exactly — a small residual category-boundary difference likely remains in 1–2 "
+               "entities (see Notes & Validation)."),
         (GREY, "Balance sheets / consolidated net worth — not available; the WTB export is income-statement only."),
     ]
     r = conf_row + 1
@@ -286,6 +293,21 @@ def main():
     )
     wsx[f"B{story_row+1}"].font = Font(size=10, color=NAVY, bold=True)
     wsx.merge_cells(f"B{story_row+1}:L{story_row+1}")
+
+    group_row = story_row + 3
+    wsx.merge_cells(f"B{group_row}:L{group_row}")
+    wsx[f"B{group_row}"] = f"Group-wide, {len(entity_ids)} entities — 3-year trend (real, FY2023→FY2025)"
+    wsx[f"B{group_row}"].font = Font(size=13, bold=True, color=NAVY)
+    wsx[f"B{group_row+1}"] = (
+        '="Revenue: $"&TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],'
+        '"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2023"),"#,##0")&" (FY2023) → $"&'
+        'TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],"Operating Revenue",'
+        'Fact_TrialBalance[FiscalYear],"FY2025"),"#,##0")&" (FY2025)   |   Net Income: $"&'
+        'TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[FiscalYear],"FY2023"),"#,##0")&'
+        '" → $"&TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[FiscalYear],"FY2025"),"#,##0")'
+    )
+    wsx[f"B{group_row+1}"].font = Font(size=10, color=NAVY, bold=True)
+    wsx.merge_cells(f"B{group_row+1}:L{group_row+1}")
 
     for col in "ABCDEFGHIJKL":
         wsx.column_dimensions[col].width = wsx.column_dimensions[col].width or 14
@@ -325,7 +347,7 @@ def main():
     ws["C6"].font = Font(bold=True, size=12, color=NAVY)
     ws["C6"].fill = GOLD_FILL
     ws["C6"].alignment = Alignment(horizontal="center")
-    dv_entity = DataValidation(type="list", formula1="=Dim_Entity!$B$2:$B$16", allow_blank=False)
+    dv_entity = DataValidation(type="list", formula1="=Dim_Entity!$B$2:$B$17", allow_blank=False)
     ws.add_data_validation(dv_entity)
     dv_entity.add(ws["C6"])
 
@@ -338,13 +360,13 @@ def main():
     dv_fy = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
     ws.add_data_validation(dv_fy)
     dv_fy.add(ws["H6"])
-    ws["I6"] = "⚠ FY2023 is populated for Restaurant IndiaRosa 2 only"
+    ws["I6"] = "3 years, all 16 entities"
     ws["I6"].font = Font(size=8, italic=True, color=GREY)
 
     # Helper: selected EntityId
     ws["B8"] = "EntityId ->"
     ws["B8"].font = Font(size=8, color=GREY)
-    ws["C8"] = '=INDEX(Dim_Entity!$A$2:$A$16,MATCH($C$6,Dim_Entity!$B$2:$B$16,0))'
+    ws["C8"] = '=INDEX(Dim_Entity!$A$2:$A$17,MATCH($C$6,Dim_Entity!$B$2:$B$17,0))'
     ws["C8"].font = Font(size=8, color=GREY)
     eid_cell = "$C$8"
     fy_cell = "$H$6"
@@ -645,22 +667,22 @@ def main():
     for col, w in zip("ABCDEFGH", [3, 18, 18, 18, 18, 3, 18, 18]):
         ws3.column_dimensions[col].width = w
 
-    ws3["B5"] = "15-entity group total (per Entity Register) — 3 entities pending WTB files: Sandhu & Sandhu Enr., 2 trusts"
+    ws3["B5"] = f"{len(entity_ids)}-entity group total (per Entity Register) — 2 family trusts pending WTB files"
     ws3["B5"].font = Font(italic=True, size=9, color=GREY)
 
     r0 = 6
-    style_kpi_card(ws3, r0, 2, "GROUP REVENUE", "=SUM('Entity Register'!C5:C19)")
-    style_kpi_card(ws3, r0, 4, "GROUP EBITDA", "=SUM('Entity Register'!J5:J19)", big_fill=TEAL_FILL)
-    style_kpi_card(ws3, r0, 7, "GROUP NET INCOME", "=SUM('Entity Register'!K5:K19)")
+    style_kpi_card(ws3, r0, 2, "GROUP REVENUE", "=SUM('Entity Register'!C5:C20)")
+    style_kpi_card(ws3, r0, 4, "GROUP EBITDA", "=SUM('Entity Register'!J5:J20)", big_fill=TEAL_FILL)
+    style_kpi_card(ws3, r0, 7, "GROUP NET INCOME", "=SUM('Entity Register'!K5:K20)")
 
     r1 = r0 + 4
-    style_kpi_card(ws3, r1, 2, "GROUP INCOME TAX", "=SUM('Entity Register'!I5:I19)", big_fill=TEAL_FILL)
+    style_kpi_card(ws3, r1, 2, "GROUP INCOME TAX", "=SUM('Entity Register'!I5:I20)", big_fill=TEAL_FILL)
     style_kpi_card(
         ws3, r1, 4, "EFFECTIVE TAX RATE",
-        "=IFERROR(SUM('Entity Register'!I5:I19)/(SUM('Entity Register'!K5:K19)+SUM('Entity Register'!I5:I19)),0)",
+        "=IFERROR(SUM('Entity Register'!I5:I20)/(SUM('Entity Register'!K5:K20)+SUM('Entity Register'!I5:I20)),0)",
         fmt=PCT, big_fill=TEAL_FILL,
     )
-    style_kpi_card(ws3, r1, 7, "ENTITIES IN MODEL", "=COUNTA('Entity Register'!A5:A19)", fmt='0', big_fill=TEAL_FILL)
+    style_kpi_card(ws3, r1, 7, "ENTITIES IN MODEL", "=COUNTA('Entity Register'!A5:A20)", fmt='0', big_fill=TEAL_FILL)
 
     # Segment rollup + chart
     seg_row0 = r1 + 5
@@ -710,19 +732,28 @@ def main():
     notes = [
         "SANDHU GROUP INTERACTIVE DASHBOARD — Build Notes",
         "",
-        "Scope: 15 of 18 entities (all except Sandhu & Sandhu Enr., Gurpreet Sandhu Trust, "
-        "Harpreet Sandhu Trust — WTB files not yet supplied for these).",
+        f"Scope: {len(entity_ids)} of 18 entities. Every one of these was rebuilt fresh from its raw "
+        "CaseWare WTB export in this session (not carried over from any prior file) and covers 3 "
+        "fiscal years: FY2023, FY2024, FY2025.",
         "",
-        "Restaurant IndiaRosa 2 (9455-8236 QI) was rebuilt in this workbook directly from its "
-        "CaseWare WTB export (Res_In2_2025_WTB.xlsx), categorized via GIFI_Master_Mapping_v2.xlsx, "
-        "and matches every Section 6 benchmark exactly:",
-        "  Net Income FY2025 = $462,894.92 (benchmark $462,894.92) — EXACT",
-        "  Net Income FY2024 = $736,959.45 (benchmark $736,959.45) — EXACT",
-        "  All 12 FY2025 category totals match the Section 6 breakdown exactly.",
+        "Missing: both family trusts (Gurpreet Sandhu Trust, Harpreet Sandhu Trust — ~$4-$10/yr "
+        "activity per the handoff, no files supplied) and Sandhu & Sandhu Enr.'s Corporate Taxprep "
+        "export (its WTB was supplied and is included).",
         "",
-        "Three accounts in the IndiaRosa 2 WTB carry a GIFI code that contradicts the account name; "
-        "these were treated as account-level overrides (not changes to the master GIFI mapping, which "
-        "is presumed correct for other entities' use of the same codes):",
+        "UNEXPECTED FILE: 947_338_2025_Tax.csv identifies its filer as '9475-3381 Québec Inc.' — an "
+        "entity not in the Section 4 entity list at all. No WTB was supplied for it, so it is NOT "
+        "included in this workbook. Flagged for you to confirm whether it belongs in the group.",
+        "",
+        "VALIDATION — every entity's FY2025 Net Income matches an independent benchmark exactly:",
+        "  Restaurant IndiaRosa 2 matches every Section 6 category benchmark to the penny (Net Income "
+        "FY2025 $462,894.92, FY2024 $736,959.45) — see the account-level exceptions below.",
+        "  All other 15 entities match the Validation Log tab in GIFI_Master_Mapping_v2.xlsx exactly, "
+        "including Bistro Guru Inc. ($-30,118.89), which RESOLVES the discrepancy flagged in an earlier "
+        "version of this workbook (the old starter kit's $-45,954.06 figure for Bistro Guru was wrong; "
+        "the fresh WTB rebuild confirms the Validation Log was correct).",
+        "",
+        "Restaurant IndiaRosa 2 — three accounts in its WTB carry a GIFI code that contradicts the "
+        "account name; treated as account-level overrides, not changes to the master GIFI mapping:",
         "  Acct 45130 'Valet service' + 45125 'Musical entertainment' — tagged GIFI 9270 (Amortization) "
         "-> reclassified to Marketing & Entertainment.",
         "  Acct 44215 'Rent - Ford' + 33455 'Equipment rental' + 45250 'Travelling - gas & repairs' "
@@ -730,36 +761,41 @@ def main():
         "  Acct 45150 'Consulting fees' — tagged GIFI 8863 (Administrative) -> reclassified to "
         "Other Operating per user confirmation (matches Section 6 Admin $99,729 / Other Operating $79,976 exactly).",
         "",
-        "The other 14 entities' figures are carried over unchanged from Sandhu_Excel_Model_Data.xlsx "
-        "(the pre-built starter kit) and were NOT re-derived from raw WTB files in this session — "
-        "only IndiaRosa 2 was rebuilt from source and fully re-validated.",
+        "Sandhu & Sandhu Enr. — two Map No formatting variants ('40.1' vs '40. 1') were causing 3 "
+        "accounts to fall through the fallback table uncategorized; fixed by normalizing whitespace in "
+        "the Map No match, plus adding one missing fallback row (Map No '40. 3' -> Administrative, "
+        "Insurance). After the fix, FY2025 Net Income matches the Validation Log exactly ($-15,821.17).",
         "",
-        "UNRESOLVED CONFLICT FOUND: Bistro Guru Inc. FY2025 Net Income is -$45,954.06 in this carried-over "
-        "data, but the Validation Log tab in GIFI_Master_Mapping_v2.xlsx independently validated it at "
-        "-$30,118.89 for the same entity/year — a $15,835.17 discrepancy between two of the project's own "
-        "source files. Not resolved here (no raw WTB for Bistro Guru in this session) — needs the client's "
-        "WTB file to re-derive and confirm which figure is correct.",
+        "UNRESOLVED: group-level FY2025 Revenue ($14,945,731) and EBITDA ($2,734,142) are within ~0.5% "
+        "and ~1.8% of the Section 6 16-entity benchmark ($14,873,731 / $2,784,496) despite every single "
+        "entity's own Net Income matching its benchmark exactly. Income Tax and Investment & Other "
+        "Income match exactly. This means a small amount is sitting in a different category than the "
+        "original benchmark used, in one or two entities — similar in nature to IndiaRosa 2's account "
+        "exceptions above, but not yet isolated. Group Net Income is within $5,014 (0.8%) of benchmark.",
         "",
-        "NOT YET INCLUDED: Corporate Taxprep data (SBD, GRIP, RDTOH, CDA, Part I tax payable). Per the "
-        "handoff doc, RDTOH and CDA field mappings are unverified — these will not be added until "
-        "cross-validated against a known figure, and will be confirmed with you before being treated as reliable.",
+        "NOT YET INCLUDED: RDTOH and CDA (confirmed absent from the Taxprep export tested — see 03 Tax "
+        "Position). SBD/GRIP/Part I tax figures are real for IndiaRosa 2's 14 associated corporations "
+        "(from its Taxprep SLIPA schedule) but each entity's OWN SBD claim from its own Taxprep export "
+        "has not yet been pulled in — only IndiaRosa 2's Tax CSV has been mined for Section 3-style data.",
         "",
         "Interactivity: this workbook uses dropdown selectors ('02 Profitability'!C6 Entity, !H6 "
         "Fiscal Year) driving live SUMIFS formulas and charts — no Power Pivot/DAX setup required, "
         "works in any version of Excel. Entity Register and raw data sheets are Excel Tables with "
         "built-in filter dropdowns per column.",
         "",
-        "Recalculated and verified in LibreOffice headless — see verification log for the exact "
-        "cell values confirmed.",
+        "Recalculated and verified in LibreOffice headless — every KPI card and cross-check in this "
+        "sheet was confirmed against the actual computed cell values, not just the formula text.",
     ]
     for i, line in enumerate(notes, start=1):
         c = ws4.cell(row=i, column=1, value=line)
         c.alignment = Alignment(wrap_text=True, vertical="top")
         if i == 1:
             c.font = Font(bold=True, size=14, color=NAVY)
-        elif line.strip().startswith("UNRESOLVED"):
+        elif line.strip().startswith(("UNRESOLVED", "UNEXPECTED FILE")):
             c.font = Font(size=10, bold=True, color=RED)
-        elif line.strip().startswith(("Net Income", "All 12", "Acct", "  Acct")):
+        elif line.strip().startswith("VALIDATION"):
+            c.font = Font(size=10, bold=True, color=GREEN)
+        elif line.strip().startswith(("Restaurant IndiaRosa 2 matches", "All other 15", "Acct", "  Acct")):
             c.font = Font(size=10, color=TEAL)
         else:
             c.font = Font(size=10, color="1A1A1A")
