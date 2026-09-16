@@ -1,0 +1,132 @@
+// ============================================================
+// SANDHU GROUP — FINAL LOADER (Working Trial Balance + GIFI)
+// ============================================================
+// Setup: Power BI Desktop -> Home -> Transform Data -> Home ->
+// Advanced Editor -> paste this, replacing existing content -> Done.
+//
+// Requires GIFI_Master_Mapping_v2.xlsx in the same folder as your
+// WTB exports (three tabs used: "GIFI Master Mapping",
+// "Fallback - Map No (blank GIFI)", and this script also needs
+// an Entity lookup table since WTB files don't contain the
+// company name inside the file — only in the filename).
+//
+// Output: one long fact table — Entity | Category | FiscalYear | Amount
+// Covers both FY2025 (Final) and FY2024 (Prior), since both are
+// in every WTB file already.
+// ============================================================
+
+let
+    // ---- CONFIG: set this once ----
+    FolderPath = "C:\Users\Local 32\Desktop\SA\Project Final\WTB 2025",
+    GifiMapFilePath = "C:\Users\Local 32\Desktop\SA\Project Final\WTB 2025\GIFI_Master_Mapping_v2.xlsx",
+
+    // ---- Entity lookup: filename prefix -> real Entity ID/Name/Segment ----
+    // Add a row here whenever a new entity's WTB file is added.
+    EntityLookup = #table(
+        {"FilePrefix","EntityId","EntityName","Segment"},
+        {
+            {"935_742","9357-7427 QI","Harpreet Sandhu (9357-7427)","HoldCo"},
+            {"936_167","9366-1676 QI","Gurpreet Sandhu (9366-1676)","HoldCo"},
+            {"942_454","9425-4547 QI","Harpreet Sandhu (9425-4547)","HoldCo"},
+            {"945_416","9455-4169 QI","Gurpreet Sandhu (9455-4169)","HoldCo"},
+            {"945_417","9455-4177 QI","Harpreet Sandhu (9455-4177)","HoldCo"},
+            {"945_420","9455-4201 QI","Sandhu Holdco","HoldCo"},
+            {"Aub_Stl","9108-6876 QI","Auberge St Louis","Hospitality OpCo"},
+            {"Bis_Gur","N/A","Bistro Guru Inc.","Restaurant OpCo"},
+            {"Lob_Lou","9096-0436 QI","Lobby Lounge","Restaurant OpCo"},
+            {"Res_Her","9504-7510 QI","Restaurant Heritage","Restaurant OpCo"},
+            {"Res_In2","9455-8236 QI","Restaurant IndiaRosa 2","Restaurant OpCo"},
+            {"Res_In3","9525-2854 QI","Restaurant IndiaRosa 3","Restaurant OpCo"},
+            {"Res_Ind","9366-1049 QI","Restaurant IndiaRosa 1","Restaurant OpCo"},
+            {"Res_Sa2","9098-0558 QI","Restaurant Sandhu","Restaurant OpCo"},
+            {"San_Lea","2749-8567 QI","Sandhu Leasing","RealCo"},
+            {"San_San","N/A","Sandhu & Sandhu Enr.","RealCo"}
+            // Trusts not yet loaded in this format — add here once available:
+            // {"San_tr3","N/A","Gurpreet Sandhu Trust","Trust"},
+            // {"San_Tr4","N/A","Harpreet Sandhu Trust","Trust"}
+        }
+    ),
+
+    // ---- Load the GIFI master mapping ----
+    GifiSource = Excel.Workbook(File.Contents(GifiMapFilePath), null, true),
+    GifiMap = GifiSource{[Item="GIFI Master Mapping",Kind="Sheet"]}[Data],
+    GifiMapPromoted = Table.PromoteHeaders(GifiMap, [PromoteAllScalars=true]),
+    GifiMapTyped = Table.TransformColumnTypes(GifiMapPromoted, {{"GIFI Code", type text}}),
+
+    FallbackMap = GifiSource{[Item="Fallback - Map No (blank GIFI)",Kind="Sheet"]}[Data],
+    FallbackPromoted = Table.PromoteHeaders(FallbackMap, [PromoteAllScalars=true]),
+    FallbackWithKey = Table.AddColumn(FallbackPromoted, "FallbackKey", each Text.From([FilePrefix]) & "|" & Text.From([Map No])),
+    FallbackTyped = Table.TransformColumnTypes(FallbackWithKey, {{"FallbackKey", type text}}),
+
+    // ---- Function: parse ONE WTB file ----
+    fnParseWTB = (fileContent as binary, fileName as text) as table =>
+        let
+            Workbook = Excel.Workbook(fileContent, null, true),
+            Sheet1 = Workbook{[Item="Sheet1",Kind="Sheet"]}[Data],
+            Promoted = Table.PromoteHeaders(Sheet1, [PromoteAllScalars=true]),
+
+            // Keep only Income statement rows
+            PLOnly = Table.SelectRows(Promoted, each [Type] = "Income statement"),
+
+            // Derive the entity's file prefix from the filename
+            // (e.g. "Res_In2_2025_WTB.xlsx" -> "Res_In2")
+            Prefix = Text.BeforeDelimiter(fileName, "_2025_WTB"),
+            AddPrefix = Table.AddColumn(PLOnly, "FilePrefix", each Prefix),
+
+            // Force GIFI to text before joining — the WTB file stores GIFI
+            // as a number, but the mapping table has it as text. Without
+            // this conversion, every GIFI match silently fails.
+            AddGifiText = Table.TransformColumns(AddPrefix, {{"GIFI", each Text.From(_), type text}}),
+
+            // Merge GIFI category first
+            MergedGifi = Table.NestedJoin(AddGifiText, {"GIFI"}, GifiMapTyped, {"GIFI Code"}, "GifiMatch", JoinKind.LeftOuter),
+            ExpandedGifi = Table.ExpandTableColumn(MergedGifi, "GifiMatch", {"Category"}, {"Category_ByGifi"}),
+
+            // Fallback to Map No — SCOPED TO THIS ENTITY, because Map No is
+            // reused for different purposes across different entities (the
+            // same lesson learned earlier: it is not a safe universal key).
+            AddFallbackKey = Table.AddColumn(ExpandedGifi, "FallbackKey", each Prefix & "|" & Text.From([Map No])),
+            MergedFallback = Table.NestedJoin(AddFallbackKey, {"FallbackKey"}, FallbackTyped, {"FallbackKey"}, "FallbackMatch", JoinKind.LeftOuter),
+            ExpandedFallback = Table.ExpandTableColumn(MergedFallback, "FallbackMatch", {"Category"}, {"Category_ByMapNo"}),
+
+            AddFinalCategory = Table.AddColumn(ExpandedFallback, "Category", each
+                if [Category_ByGifi] <> null then [Category_ByGifi]
+                else if [Category_ByMapNo] <> null then [Category_ByMapNo]
+                else "UNMAPPED - review"),
+
+            // Long-format: one row per Category per fiscal year
+            Current = Table.SelectColumns(
+                Table.AddColumn(AddFinalCategory, "FiscalYear", each "FY2025"),
+                {"FilePrefix","Category","FiscalYear","Final: 2025-03-31"}),
+            CurrentRenamed = Table.RenameColumns(Current, {{"Final: 2025-03-31","Amount"}}),
+
+            Prior = Table.SelectColumns(
+                Table.AddColumn(AddFinalCategory, "FiscalYear", each "FY2024"),
+                {"FilePrefix","Category","FiscalYear","Prior: 2024-03-31"}),
+            PriorRenamed = Table.RenameColumns(Prior, {{"Prior: 2024-03-31","Amount"}}),
+
+            Combined = Table.Combine({CurrentRenamed, PriorRenamed}),
+
+            // Group to one row per Entity + Category + Year
+            Grouped = Table.Group(Combined, {"FilePrefix","Category","FiscalYear"},
+                {{"Amount", each List.Sum([Amount]), type number}})
+        in
+            Grouped,
+
+    // ---- Load every WTB file in the folder ----
+    Files = Folder.Files(FolderPath),
+    FilteredFiles = Table.SelectRows(Files, each Text.EndsWith([Name], "_WTB.xlsx")),
+    Parsed = Table.AddColumn(FilteredFiles, "Parsed", each fnParseWTB([Content], [Name])),
+    AllRows = Table.Combine(Parsed[Parsed]),
+
+    // ---- Attach real Entity info via the lookup table ----
+    WithEntity = Table.NestedJoin(AllRows, {"FilePrefix"}, EntityLookup, {"FilePrefix"}, "EntityInfo", JoinKind.LeftOuter),
+    Final = Table.ExpandTableColumn(WithEntity, "EntityInfo", {"EntityId","EntityName","Segment"})
+in
+    Final
+
+// ============================================================
+// AUDIT CHECK: filter this output to Category = "UNMAPPED - review"
+// Anything there is a GIFI code (or blank-GIFI Map No) not yet in
+// GIFI_Master_Mapping_v2.xlsx — add it to that file and refresh.
+// ============================================================
