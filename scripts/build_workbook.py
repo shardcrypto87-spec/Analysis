@@ -223,7 +223,7 @@ def main():
         wsx.column_dimensions[col].width = w
     paint_background(wsx, max_row=60, max_col=13)
 
-    badge(wsx, "B2:J2", f"DRAFT MANAGEMENT REPORT — {len(entity_ids)}/18 ENTITIES REBUILT FROM SOURCE  ·  "
+    badge(wsx, "B2:J2", f"DRAFT MANAGEMENT REPORT — ALL {len(entity_ids)} ENTITIES IN SCOPE REBUILT FROM SOURCE  ·  "
                          "3-YEAR P&L, ALL VALIDATED TO THE PENNY")
     wsx.merge_cells("B4:L5")
     wsx["B4"] = "Sandhu Group — Consolidated Performance Report"
@@ -254,16 +254,16 @@ def main():
     wsx[f"B{conf_row}"] = "Data confidence"
     wsx[f"B{conf_row}"].font = Font(size=13, bold=True, color=NAVY)
     conf_lines = [
-        (GREEN, f"P&L, {len(entity_ids)}/18 entities — every entity rebuilt fresh from its raw CaseWare WTB "
-                "(FY2023–FY2025) and independently cross-validated: FY2025 Net Income matches the project's "
-                "Validation Log exactly for all 16, to the penny."),
+        (GREEN, f"P&L, all {len(entity_ids)} entities in scope (2 family trusts excluded per instruction) — "
+                "every entity rebuilt fresh from its raw CaseWare WTB (FY2023–FY2025) and independently "
+                "cross-validated: FY2025 Net Income matches the project's Validation Log exactly, to the penny."),
         (GOLD, "Restaurant IndiaRosa 2 — additionally cross-checked against its Corporate Taxprep export: "
                "Income Tax and FY2024 Net Income both match the WTB exactly."),
         (GOLD, "Associated-group SBD & GRIP (14 entities) — real, from IndiaRosa 2's Taxprep SLIPA schedule. "
                "Excludes IndiaRosa 2's own SBD (not found in this export)."),
         (GREY, "RDTOH & CDA — confirmed NOT present in the Taxprep export tested (see 03 Tax Position)."),
-        (GREY, "Both family trusts (~$4–$10/yr activity per the handoff) and one unexpected entity found in "
-               "the Taxprep data (9475-3381 Québec Inc., no WTB supplied) — not yet modeled."),
+        (GREY, "One unexpected entity found in the Taxprep data (9475-3381 Québec Inc.) has no WTB supplied "
+               "and is not modeled — needs confirmation on whether it belongs in the group."),
         (GREY, "Group-level Revenue/EBITDA are within ~0.5% of the Section 6 benchmark despite every entity's own "
                "Net Income matching exactly — a small residual category-boundary difference likely remains in 1–2 "
                "entities (see Notes & Validation)."),
@@ -667,7 +667,7 @@ def main():
     for col, w in zip("ABCDEFGH", [3, 18, 18, 18, 18, 3, 18, 18]):
         ws3.column_dimensions[col].width = w
 
-    ws3["B5"] = f"{len(entity_ids)}-entity group total (per Entity Register) — 2 family trusts pending WTB files"
+    ws3["B5"] = f"{len(entity_ids)}-entity group total (per Entity Register) — full scope (2 family trusts excluded)"
     ws3["B5"].font = Font(italic=True, size=9, color=GREY)
 
     r0 = 6
@@ -732,13 +732,12 @@ def main():
     notes = [
         "SANDHU GROUP INTERACTIVE DASHBOARD — Build Notes",
         "",
-        f"Scope: {len(entity_ids)} of 18 entities. Every one of these was rebuilt fresh from its raw "
-        "CaseWare WTB export in this session (not carried over from any prior file) and covers 3 "
-        "fiscal years: FY2023, FY2024, FY2025.",
+        f"Scope: all {len(entity_ids)} entities (both family trusts — Gurpreet Sandhu Trust, Harpreet Sandhu "
+        "Trust — excluded from scope per instruction; ~$4-$10/yr activity per the handoff, immaterial). "
+        "Every one of these was rebuilt fresh from its raw CaseWare WTB export in this session (not "
+        "carried over from any prior file) and covers 3 fiscal years: FY2023, FY2024, FY2025.",
         "",
-        "Missing: both family trusts (Gurpreet Sandhu Trust, Harpreet Sandhu Trust — ~$4-$10/yr "
-        "activity per the handoff, no files supplied) and Sandhu & Sandhu Enr.'s Corporate Taxprep "
-        "export (its WTB was supplied and is included).",
+        "Missing: Sandhu & Sandhu Enr.'s Corporate Taxprep export (its WTB was supplied and is included).",
         "",
         "UNEXPECTED FILE: 947_338_2025_Tax.csv identifies its filer as '9475-3381 Québec Inc.' — an "
         "entity not in the Section 4 entity list at all. No WTB was supplied for it, so it is NOT "
