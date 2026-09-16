@@ -1,0 +1,148 @@
+{
+  "entity_id": "9455-8236 QI",
+  "rows": [
+    [
+      "9455-8236 QI",
+      "Operating Revenue",
+      "FY2025",
+      -5213628.68
+    ],
+    [
+      "9455-8236 QI",
+      "Management Fees (Interco)",
+      "FY2025",
+      30000.0
+    ],
+    [
+      "9455-8236 QI",
+      "Interest & Financing",
+      "FY2025",
+      146738.3
+    ],
+    [
+      "9455-8236 QI",
+      "Occupancy",
+      "FY2025",
+      474171.72
+    ],
+    [
+      "9455-8236 QI",
+      "Other Operating",
+      "FY2025",
+      79976.26
+    ],
+    [
+      "9455-8236 QI",
+      "Administrative",
+      "FY2025",
+      99728.72
+    ],
+    [
+      "9455-8236 QI",
+      "Marketing & Entertainment",
+      "FY2025",
+      141793.12
+    ],
+    [
+      "9455-8236 QI",
+      "Amortization",
+      "FY2025",
+      199058.0
+    ],
+    [
+      "9455-8236 QI",
+      "COGS",
+      "FY2025",
+      1647558.89
+    ],
+    [
+      "9455-8236 QI",
+      "Payroll & Benefits",
+      "FY2025",
+      1780201.39
+    ],
+    [
+      "9455-8236 QI",
+      "Repairs & Maintenance",
+      "FY2025",
+      88959.36
+    ],
+    [
+      "9455-8236 QI",
+      "Income Tax",
+      "FY2025",
+      62548.0
+    ],
+    [
+      "9455-8236 QI",
+      "Operating Revenue",
+      "FY2024",
+      -6233247.68
+    ],
+    [
+      "9455-8236 QI",
+      "Management Fees (Interco)",
+      "FY2024",
+      105000.0
+    ],
+    [
+      "9455-8236 QI",
+      "Interest & Financing",
+      "FY2024",
+      178561.41
+    ],
+    [
+      "9455-8236 QI",
+      "Occupancy",
+      "FY2024",
+      382549.29
+    ],
+    [
+      "9455-8236 QI",
+      "Other Operating",
+      "FY2024",
+      73281.73
+    ],
+    [
+      "9455-8236 QI",
+      "Administrative",
+      "FY2024",
+      88387.59
+    ],
+    [
+      "9455-8236 QI",
+      "Marketing & Entertainment",
+      "FY2024",
+      161333.63
+    ],
+    [
+      "9455-8236 QI",
+      "Amortization",
+      "FY2024",
+      222195.0
+    ],
+    [
+      "9455-8236 QI",
+      "COGS",
+      "FY2024",
+      1888352.46
+    ],
+    [
+      "9455-8236 QI",
+      "Payroll & Benefits",
+      "FY2024",
+      2181636.69
+    ],
+    [
+      "9455-8236 QI",
+      "Repairs & Maintenance",
+      "FY2024",
+      214990.43
+    ]
+  ],
+  "net_income": {
+    "FY2025": 462894.92,
+    "FY2024": 736959.45
+  },
+  "uncategorized_with_balance": []
+}
