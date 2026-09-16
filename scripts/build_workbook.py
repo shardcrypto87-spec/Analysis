@@ -157,7 +157,8 @@ def main():
         tax = json.load(f)
 
     entity_names = {e[0]: e[1] for e in dim_entity_rows}
-    entity_segment = {e[0]: e[2] for e in dim_entity_rows}
+    entity_legal = {e[0]: e[2] for e in dim_entity_rows}
+    entity_industry = {e[0]: e[3] for e in dim_entity_rows}
     entity_ids = [e[0] for e in dim_entity_rows]
 
     wb = openpyxl.Workbook()
@@ -167,16 +168,17 @@ def main():
     # Sheet: Dim_Entity, Dim_Calendar, Fact_TrialBalance (raw tables)
     # ------------------------------------------------------------------ #
     ws_e = wb.create_sheet("Dim_Entity")
-    ws_e.append(["EntityId", "EntityName", "Segment"])
+    ws_e.append(["EntityId", "CompanyName", "LegalName", "Industry"])
     for r in dim_entity_rows:
         ws_e.append(r)
     for c in ws_e[1]:
         c.font = Font(bold=True, color=WHITE)
         c.fill = NAVY_FILL
-    ws_e.column_dimensions["A"].width = 16
-    ws_e.column_dimensions["B"].width = 30
-    ws_e.column_dimensions["C"].width = 20
-    tab_e = Table(displayName="Dim_Entity", ref=f"A1:C{ws_e.max_row}")
+    ws_e.column_dimensions["A"].width = 12
+    ws_e.column_dimensions["B"].width = 34
+    ws_e.column_dimensions["C"].width = 24
+    ws_e.column_dimensions["D"].width = 16
+    tab_e = Table(displayName="Dim_Entity", ref=f"A1:D{ws_e.max_row}")
     tab_e.tableStyleInfo = TableStyleInfo(name="TableStyleMedium2", showRowStripes=True)
     ws_e.add_table(tab_e)
 
@@ -196,9 +198,9 @@ def main():
     ws_c.add_table(tab_c)
 
     ws_f = wb.create_sheet("Fact_TrialBalance")
-    ws_f.append(["EntityId", "Category", "FiscalYear", "Amount", "Segment"])
+    ws_f.append(["EntityId", "Category", "FiscalYear", "Amount", "Industry"])
     for r in fact_rows:
-        ws_f.append(r + [entity_segment[r[0]]])
+        ws_f.append(r + [entity_industry[r[0]]])
     for c in ws_f[1]:
         c.font = Font(bold=True, color=WHITE)
         c.fill = NAVY_FILL
@@ -284,7 +286,8 @@ def main():
     wsx["B4"].alignment = Alignment(vertical="center")
 
     wsx.merge_cells("B6:M6")
-    wsx["B6"] = (f"{len(entity_ids)} entities · Restaurant OpCos, RealCos, HoldCos · FY ended March 31 · "
+    wsx["B6"] = (f"{len(entity_ids)} entities · Restaurant, Real Estate, Investments, Construction, "
+                 "Hotel & Rental · FY ended March 31 · "
                  "Prepared for group management review")
     wsx["B6"].font = Font(size=10, italic=True, color=GREY)
 
@@ -495,41 +498,41 @@ def main():
     trend_chart.width = 24
     wsx.add_chart(trend_chart, f"B{data_row + 4}")
 
-    # Performance by segment — table + horizontal bar chart
+    # Performance by industry — table + horizontal bar chart
     seg_row = data_row + 20
     wsx.merge_cells(f"B{seg_row}:M{seg_row}")
-    wsx[f"B{seg_row}"] = "Performance by segment, FY2025"
+    wsx[f"B{seg_row}"] = "Performance by industry, FY2025"
     wsx[f"B{seg_row}"].font = Font(size=13, bold=True, color=NAVY)
 
     seg_hdr = seg_row + 1
-    seg_headers = ["Segment", "# Entities", "Revenue", "EBITDA", "Margin"]
+    seg_headers = ["Industry", "# Entities", "Revenue", "EBITDA", "Margin"]
     for i, h in enumerate(seg_headers):
         c = wsx.cell(row=seg_hdr, column=2 + i, value=h)
         c.font = Font(bold=True, color=WHITE)
         c.fill = TEAL_FILL
-    segments_present = sorted({entity_segment[e] for e in entity_ids})
+    segments_present = sorted({entity_industry[e] for e in entity_ids})
     for i, seg in enumerate(segments_present):
         rr = seg_hdr + 1 + i
         wsx.cell(row=rr, column=2, value=seg)
         # Count entities via Dim_Entity, not rows in Fact_TrialBalance — an
         # entity with zero operating revenue has no "Operating Revenue" row
         # at all (zero-amount rows are dropped), which would undercount it.
-        wsx.cell(row=rr, column=3, value=f'=COUNTIF(Dim_Entity[Segment],"{seg}")')
+        wsx.cell(row=rr, column=3, value=f'=COUNTIF(Dim_Entity[Industry],"{seg}")')
         # Revenue here = Operating Revenue + Investment & Other Income, to
         # match EBITDA's income scope — HoldCos earn almost entirely via
         # intercompany dividends/interest (Investment & Other Income), so
         # Operating Revenue alone would understate it and produce a
         # nonsensical >100% "margin".
         wsx.cell(row=rr, column=4,
-                 value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Segment],"{seg}",'
+                 value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
                        f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2025")'
-                       f'-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Segment],"{seg}",'
+                       f'-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
                        f'Fact_TrialBalance[Category],"Investment & Other Income",Fact_TrialBalance[FiscalYear],"FY2025")')
         excl = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
         wsx.cell(row=rr, column=5,
-                 value=f'=-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Segment],"{seg}",'
+                 value=f'=-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
                        f'Fact_TrialBalance[FiscalYear],"FY2025")'
-                       f'-SUMPRODUCT((Fact_TrialBalance[Segment]="{seg}")*'
+                       f'-SUMPRODUCT((Fact_TrialBalance[Industry]="{seg}")*'
                        f'(Fact_TrialBalance[FiscalYear]="FY2025")*'
                        f'(ISNUMBER(MATCH(Fact_TrialBalance[Category],{{"{excl}"}},0)))*Fact_TrialBalance[Amount]))')
         wsx.cell(row=rr, column=6, value=f"=IFERROR(E{rr}/D{rr},0)")
@@ -540,7 +543,7 @@ def main():
 
     seg_chart = BarChart()
     seg_chart.type = "bar"
-    seg_chart.title = "Revenue & EBITDA by Segment"
+    seg_chart.title = "Revenue & EBITDA by Industry"
     seg_chart.style = 10
     seg_data = Reference(wsx, min_col=4, max_col=5, min_row=seg_hdr, max_row=seg_last)
     seg_cats = Reference(wsx, min_col=2, min_row=seg_hdr + 1, max_row=seg_last)
@@ -839,7 +842,7 @@ def main():
         ws2[f"{col}1"].fill = NAVY_FILL
         ws2[f"{col}2"].fill = NAVY_FILL
 
-    headers = ["EntityName", "Segment", "Revenue", "COGS", "Payroll", "Occupancy",
+    headers = ["EntityName", "Industry", "Revenue", "COGS", "Payroll", "Occupancy",
                "Interest & Financing", "Amortization", "Income Tax", "EBITDA", "Net Income"]
     hdr_row = 4
     for i, h in enumerate(headers):
@@ -856,7 +859,7 @@ def main():
     for i, eid in enumerate(entity_ids):
         rr = hdr_row + 1 + i
         ws2.cell(row=rr, column=1, value=entity_names[eid])
-        ws2.cell(row=rr, column=2, value=entity_segment[eid])
+        ws2.cell(row=rr, column=2, value=entity_industry[eid])
         ws2.cell(row=rr, column=3,
                  value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],"{eid}",'
                        f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],{fy_ref})')
@@ -928,7 +931,7 @@ def main():
     )
     style_kpi_card(ws3, r1, 7, "ENTITIES IN MODEL", "=COUNTA('Entity Register'!A5:A20)", fmt='0', big_fill=TEAL_FILL)
 
-    # Segment rollup + chart
+    # Per-entity rollup + chart
     seg_row0 = r1 + 5
     ws3.merge_cells(f"B{seg_row0}:D{seg_row0}")
     ws3[f"B{seg_row0}"] = "Revenue & Net Income by Entity"
@@ -982,6 +985,13 @@ def main():
         "carried over from any prior file) and covers 3 fiscal years: FY2023, FY2024, FY2025.",
         "",
         "Missing: Sandhu & Sandhu Enr.'s Corporate Taxprep export (its WTB was supplied and is included).",
+        "",
+        "Dim_Entity updated to the user-supplied reference table: CompanyName (incl. owner suffix, e.g. "
+        "'- Sandhu H.'), LegalName, and Industry (Construction/Real estate/Investments/Hotel/Restaurant/"
+        "Rental) replace the earlier EntityName/Segment (HoldCo/RealCo/OpCo) scheme everywhere in this "
+        "workbook. 'Rres_Ind' in that table was treated as a typo for 'Res_Ind' (same LegalName, "
+        "9366-1049 Québec Inc.) — same entity, not a new one. Sandhu & Sandhu Enr. isn't in that table "
+        "at all; its Industry ('Rental') is inferred from its sibling entity Sandhu Leasing, not given data.",
         "",
         "UNEXPECTED FILE: 947_338_2025_Tax.csv identifies its filer as '9475-3381 Québec Inc.' — an "
         "entity not in the Section 4 entity list at all. No WTB was supplied for it, so it is NOT "

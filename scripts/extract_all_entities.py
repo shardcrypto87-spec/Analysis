@@ -101,10 +101,10 @@ def main():
             print(f"!! {prefix}: no entity mapping (unexpected file), skipping — {path}")
             continue
         totals, net_income, uncategorized = parse_wtb(path, prefix, gifi_map, fallback)
-        entity_name = ENTITIES[entity_id][0]
+        entity_name, entity_legal, _entity_industry = ENTITIES[entity_id]
         # Validation Log keys are like "9357-7427 QI" or "Bistro Guru Inc.";
         # "Sandhu & Sandhu Enr." is logged there as just "Sandhu & Sandhu".
-        bench = validation_log.get(entity_id) or validation_log.get(entity_name)
+        bench = validation_log.get(entity_id) or validation_log.get(entity_name) or validation_log.get(entity_legal)
         if bench is None and entity_id == "N/A_SanSan":
             bench = validation_log.get("Sandhu & Sandhu")
         computed = net_income["FY2025"]

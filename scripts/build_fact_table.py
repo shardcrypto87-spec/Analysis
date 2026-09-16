@@ -28,7 +28,7 @@ for entity_id, rec in others.items():
                 continue
             fact_rows.append([entity_id, cat, fy, round(amt, 2)])
 
-dim_entity_rows = [[eid, name, segment] for eid, (name, segment) in ENTITIES.items()]
+dim_entity_rows = [[eid, name, legal, industry] for eid, (name, legal, industry) in ENTITIES.items()]
 
 with open("output/final_fact_table.json", "w") as f:
     json.dump({"fact_rows": fact_rows, "dim_entity_rows": dim_entity_rows}, f, indent=2)
@@ -48,8 +48,9 @@ vlog = {row[0]: row[1] for row in wb["Validation Log"].iter_rows(min_row=2, valu
 
 print()
 print("Final cross-check, FY2025 net income vs Validation Log:")
-for eid, (name, seg) in ENTITIES.items():
+for eid, (name, legal, industry) in ENTITIES.items():
     computed = round(-ni[(eid, "FY2025")], 2)
-    bench = vlog.get(eid) or vlog.get(name) or (vlog.get("Sandhu & Sandhu") if eid == "N/A_SanSan" else None)
+    bench = (vlog.get(eid) or vlog.get(name) or vlog.get(legal)
+              or (vlog.get("Sandhu & Sandhu") if eid == "N/A_SanSan" else None))
     status = "MATCH" if bench is not None and abs(computed - bench) < 1 else ("no benchmark" if bench is None else "MISMATCH")
-    print(f"  {name:30s} FY2025={computed:>14,.2f}  benchmark={bench}  [{status}]")
+    print(f"  {name:35s} FY2025={computed:>14,.2f}  benchmark={bench}  [{status}]")

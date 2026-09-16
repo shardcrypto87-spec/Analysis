@@ -1954,83 +1954,99 @@
   "dim_entity_rows": [
     [
       "9357-7427 QI",
+      "9357-7427 Qu\u00e9bec Inc. - Sandhu H.",
       "9357-7427 Qu\u00e9bec Inc.",
-      "HoldCo"
+      "Construction"
     ],
     [
       "9366-1676 QI",
+      "9366-1676 Qu\u00e9bec Inc. - Sandhu G.",
       "9366-1676 Qu\u00e9bec Inc.",
-      "HoldCo"
+      "Real estate"
     ],
     [
       "9425-4547 QI",
+      "9425-4547 Qu\u00e9bec Inc. - Sandhu G",
       "9425-4547 Qu\u00e9bec Inc.",
-      "HoldCo"
+      "Real estate"
     ],
     [
       "9455-4169 QI",
-      "9455-4169 Qu\u00e9bec Inc.",
-      "HoldCo"
+      "9455-4169 Qu\u00e9bec Inc. - Sandhu",
+      "9455-4169 Qu\u00e9bec Inc",
+      "Investments"
     ],
     [
       "9455-4177 QI",
+      "9455-4177 Qu\u00e9bec Inc. - Sandhu H.",
       "9455-4177 Qu\u00e9bec Inc.",
-      "HoldCo"
+      "Investments"
     ],
     [
       "9455-4201 QI",
-      "Sandhu Holdco",
-      "HoldCo"
+      "9455-4201 Qu\u00e9bec Inc. - Sandhu G",
+      "9455-4201 Qu\u00e9bec inc.",
+      "Investments"
     ],
     [
       "9108-6876 QI",
-      "Auberge St Louis",
-      "Hospitality OpCo"
+      "Auberge du Carre St-Louis",
+      "9108-6876 Qu\u00e9bec Inc.",
+      "Hotel"
     ],
     [
       "N/A_BisGur",
       "Bistro Guru Inc.",
-      "Restaurant OpCo"
+      "Bistro Guru Inc.",
+      "Restaurant"
     ],
     [
       "9096-0436 QI",
-      "Lobby Lounge",
-      "Restaurant OpCo"
+      "Lobby Bar Lounge",
+      "9096-0436 Qu\u00e9bec Inc.",
+      "Restaurant"
     ],
     [
       "9504-7510 QI",
-      "Restaurant Heritage",
-      "Restaurant OpCo"
+      "Restaurant H\u00e9ritaj",
+      "9504-7510 Qu\u00e9bec Inc.",
+      "Restaurant"
     ],
     [
       "9455-8236 QI",
-      "Restaurant IndiaRosa 2",
-      "Restaurant OpCo"
+      "Restaurant Indiarosa II",
+      "9455-8236 Qu\u00e9bec Inc.",
+      "Restaurant"
     ],
     [
       "9525-2854 QI",
-      "Restaurant IndiaRosa 3",
-      "Restaurant OpCo"
+      "Restaurant Indiarosa III",
+      "9525-2854 Qu\u00e9bec Inc.",
+      "Restaurant"
     ],
     [
       "9366-1049 QI",
-      "Restaurant IndiaRosa 1",
-      "Restaurant OpCo"
+      "Restaurant Indiarosa",
+      "9366-1049 Qu\u00e9bec Inc.",
+      "Restaurant"
     ],
     [
       "9098-0558 QI",
-      "Restaurant Sandhu",
-      "Restaurant OpCo"
+      "Restaurant Pizzeria Sandhu",
+      "9098-0558 Qu\u00e9bec Inc.",
+      "Restaurant"
     ],
     [
       "2749-8567 QI",
       "Sandhu Leasing",
-      "RealCo"
+      "2749-8567 Qu\u00e9bec Inc.",
+      "Rental"
     ],
     [
       "N/A_SanSan",
       "Sandhu & Sandhu Enr.",
-      "RealCo"
+      "Sandhu & Sandhu Enr.",
+      "Rental"
     ]
   ]
 }

@@ -1,7 +1,7 @@
 {
   "9357-7427 QI": {
     "prefix": "935_742",
-    "entity_name": "9357-7427 Qu\u00e9bec Inc.",
+    "entity_name": "9357-7427 Qu\u00e9bec Inc. - Sandhu H.",
     "totals": {
       "FY2025": {
         "Operating Revenue": 0.0,
@@ -57,7 +57,7 @@
   },
   "9366-1676 QI": {
     "prefix": "936_167",
-    "entity_name": "9366-1676 Qu\u00e9bec Inc.",
+    "entity_name": "9366-1676 Qu\u00e9bec Inc. - Sandhu G.",
     "totals": {
       "FY2025": {
         "Operating Revenue": -190152.12,
@@ -110,7 +110,7 @@
   },
   "9425-4547 QI": {
     "prefix": "942_454",
-    "entity_name": "9425-4547 Qu\u00e9bec Inc.",
+    "entity_name": "9425-4547 Qu\u00e9bec Inc. - Sandhu G",
     "totals": {
       "FY2025": {
         "Operating Revenue": -273186.0,
@@ -166,7 +166,7 @@
   },
   "9455-4169 QI": {
     "prefix": "945_416",
-    "entity_name": "9455-4169 Qu\u00e9bec Inc.",
+    "entity_name": "9455-4169 Qu\u00e9bec Inc. - Sandhu",
     "totals": {
       "FY2025": {
         "Operating Revenue": 0.0,
@@ -210,7 +210,7 @@
   },
   "9455-4177 QI": {
     "prefix": "945_417",
-    "entity_name": "9455-4177 Qu\u00e9bec Inc.",
+    "entity_name": "9455-4177 Qu\u00e9bec Inc. - Sandhu H.",
     "totals": {
       "FY2025": {
         "Operating Revenue": 0.0,
@@ -254,7 +254,7 @@
   },
   "9455-4201 QI": {
     "prefix": "945_420",
-    "entity_name": "Sandhu Holdco",
+    "entity_name": "9455-4201 Qu\u00e9bec Inc. - Sandhu G",
     "totals": {
       "FY2025": {
         "Investment & Other Income": -673859.71,
@@ -301,7 +301,7 @@
   },
   "9108-6876 QI": {
     "prefix": "Aub_Stl",
-    "entity_name": "Auberge St Louis",
+    "entity_name": "Auberge du Carre St-Louis",
     "totals": {
       "FY2025": {
         "Other Operating": 220492.18000000002,
@@ -422,7 +422,7 @@
   },
   "9096-0436 QI": {
     "prefix": "Lob_Lou",
-    "entity_name": "Lobby Lounge",
+    "entity_name": "Lobby Bar Lounge",
     "totals": {
       "FY2025": {
         "Operating Revenue": -182159.16,
@@ -484,7 +484,7 @@
   },
   "9504-7510 QI": {
     "prefix": "Res_Her",
-    "entity_name": "Restaurant Heritage",
+    "entity_name": "Restaurant H\u00e9ritaj",
     "totals": {
       "FY2025": {
         "Management Fees (Interco)": -36500.0,
@@ -543,7 +543,7 @@
   },
   "9525-2854 QI": {
     "prefix": "Res_In3",
-    "entity_name": "Restaurant IndiaRosa 3",
+    "entity_name": "Restaurant Indiarosa III",
     "totals": {
       "FY2025": {
         "Management Fees (Interco)": 0.0,
@@ -602,7 +602,7 @@
   },
   "9366-1049 QI": {
     "prefix": "Res_Ind",
-    "entity_name": "Restaurant IndiaRosa 1",
+    "entity_name": "Restaurant Indiarosa",
     "totals": {
       "FY2025": {
         "Operating Revenue": -4020097.0900000003,
@@ -664,7 +664,7 @@
   },
   "9098-0558 QI": {
     "prefix": "Res_Sa2",
-    "entity_name": "Restaurant Sandhu",
+    "entity_name": "Restaurant Pizzeria Sandhu",
     "totals": {
       "FY2025": {
         "Operating Revenue": -1606736.08,
