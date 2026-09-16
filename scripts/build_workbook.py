@@ -196,9 +196,9 @@ def main():
     ws_c.add_table(tab_c)
 
     ws_f = wb.create_sheet("Fact_TrialBalance")
-    ws_f.append(["EntityId", "Category", "FiscalYear", "Amount"])
+    ws_f.append(["EntityId", "Category", "FiscalYear", "Amount", "Segment"])
     for r in fact_rows:
-        ws_f.append(r)
+        ws_f.append(r + [entity_segment[r[0]]])
     for c in ws_f[1]:
         c.font = Font(bold=True, color=WHITE)
         c.fill = NAVY_FILL
@@ -206,111 +206,355 @@ def main():
     ws_f.column_dimensions["B"].width = 28
     ws_f.column_dimensions["C"].width = 12
     ws_f.column_dimensions["D"].width = 16
+    ws_f.column_dimensions["E"].width = 18
     for row in ws_f.iter_rows(min_row=2, max_row=ws_f.max_row, min_col=4, max_col=4):
         row[0].number_format = MONEY
     n_fact = ws_f.max_row
-    tab_f = Table(displayName="Fact_TrialBalance", ref=f"A1:D{n_fact}")
+    tab_f = Table(displayName="Fact_TrialBalance", ref=f"A1:E{n_fact}")
     tab_f.tableStyleInfo = TableStyleInfo(name="TableStyleMedium2", showRowStripes=True)
     ws_f.add_table(tab_f)
 
     # ------------------------------------------------------------------ #
-    # Sheet: 01 Exec Summary
+    # Sheet: 01 Exec Summary — laid out to match the user's reference
+    # mockup page-for-page: badge, title, FY chips, nav tabs, 6 KPI cards,
+    # data confidence, notable movers, management commentary, group
+    # trend chart, performance-by-segment. Every number is real; where the
+    # reference shows something I don't have a source for (Group Net
+    # Worth, full-group SBD utilization), it's labelled honestly rather
+    # than filled in to match the mockup's placeholder-free look.
     # ------------------------------------------------------------------ #
+    from collections import defaultdict as _dd
+    ni_by_entity_fy = _dd(lambda: _dd(float))
+    for _eid, _cat, _fy, _amt in fact_rows:
+        ni_by_entity_fy[_eid][_fy] += _amt
+    movers = []
+    for _eid in entity_ids:
+        fy23 = -ni_by_entity_fy[_eid].get("FY2023", 0)
+        fy25 = -ni_by_entity_fy[_eid].get("FY2025", 0)
+        movers.append((_eid, entity_names[_eid], fy23, fy25, fy25 - fy23))
+    movers.sort(key=lambda x: x[4])
+    biggest_decline = movers[0]
+    biggest_improvement = movers[-1]
+    loss_fy23 = sum(1 for _eid in entity_ids if -ni_by_entity_fy[_eid].get("FY2023", 0) < 0)
+    sbd_group_total = sum(g["sbd_cy"] for g in tax["associated_group_sbd_grip"])
+
+    _tot23, _tot25 = _dd(float), _dd(float)
+    for _eid, _cat, _fy, _amt in fact_rows:
+        if _fy == "FY2023":
+            _tot23[_cat] += _amt
+        elif _fy == "FY2025":
+            _tot25[_cat] += _amt
+    _rev23 = -_tot23.get("Operating Revenue", 0)
+    _rev25 = -_tot25.get("Operating Revenue", 0)
+    _excl_cats = ("Interest & Financing", "Amortization", "Income Tax")
+    ebitda23 = -sum(v for k, v in _tot23.items() if k not in _excl_cats)
+    ebitda25 = -sum(v for k, v in _tot25.items() if k not in _excl_cats)
+    ebitda23_margin = ebitda23 / _rev23 if _rev23 else 0
+    ebitda25_margin = ebitda25 / _rev25 if _rev25 else 0
+    _ni23 = -sum(_tot23.values())
+    _ni25 = -sum(_tot25.values())
+    _tax23 = _tot23.get("Income Tax", 0)
+    _tax25 = _tot25.get("Income Tax", 0)
+    tax23_rate = _tax23 / (_ni23 + _tax23) if (_ni23 + _tax23) else 0
+    tax25_rate = _tax25 / (_ni25 + _tax25) if (_ni25 + _tax25) else 0
+
     wsx = wb.create_sheet("01 Exec Summary", 0)
     wsx.sheet_view.showGridLines = False
     wsx.sheet_properties.tabColor = GOLD
-    for col, w in zip("ABCDEFGHIJKL", [3, 15, 15, 15, 15, 3, 15, 15, 15, 3, 15, 15]):
+    for col, w in zip("ABCDEFGHIJKLM", [3, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13]):
         wsx.column_dimensions[col].width = w
-    paint_background(wsx, max_row=60, max_col=13)
+    paint_background(wsx, max_row=95, max_col=14)
 
-    badge(wsx, "B2:J2", f"DRAFT MANAGEMENT REPORT — ALL {len(entity_ids)} ENTITIES IN SCOPE REBUILT FROM SOURCE  ·  "
-                         "3-YEAR P&L, ALL VALIDATED TO THE PENNY")
-    wsx.merge_cells("B4:L5")
+    badge(wsx, "B2:H2", f"DRAFT MANAGEMENT REPORT — {len(entity_ids)}/{len(entity_ids)} ENTITIES "
+                         "VALIDATED AGAINST CASEWARE")
+    # FY chips, top right — decorative (this page is a fixed FY2025-vs-FY2023
+    # snapshot, like the reference); '02 Profitability' has the live selector.
+    for i, (fy, is_current) in enumerate([("FY2023", False), ("FY2024", False), ("FY2025", True)]):
+        col = get_column_letter(11 + i)
+        c = wsx[f"{col}2"]
+        c.value = fy
+        c.font = Font(bold=True, size=9, color=WHITE if is_current else NAVY)
+        c.fill = NAVY_FILL if is_current else CARD_FILL
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        c.border = CARD_BORDER
+
+    wsx.merge_cells("B4:M5")
     wsx["B4"] = "Sandhu Group — Consolidated Performance Report"
     wsx["B4"].font = Font(name="Calibri", size=20, bold=True, color=NAVY)
     wsx["B4"].alignment = Alignment(vertical="center")
-    wsx.merge_cells("B6:L6")
-    wsx["B6"] = (f"{len(entity_ids)} entities modeled, FY2023–FY2025 · Restaurant OpCos, RealCos, HoldCos · "
-                 "FY ended March 31 · Prepared for group management review")
+
+    wsx.merge_cells("B6:M6")
+    wsx["B6"] = (f"{len(entity_ids)} entities · Restaurant OpCos, RealCos, HoldCos · FY ended March 31 · "
+                 "Prepared for group management review")
     wsx["B6"].font = Font(size=10, italic=True, color=GREY)
-    wsx["B8"].value = None
-    wsx.row_dimensions[8].height = 4
-    for col in "BCDEFGHIJKL":
-        wsx[f"{col}9"].fill = NAVY_FILL
-        wsx[f"{col}9"].border = None
-    wsx.row_dimensions[9].height = 2
 
-    # KPI row — all real, sourced from Entity Register (FY2025 column set)
+    # Nav tabs — only 01/02/03 exist as sheets so far; the rest are shown
+    # greyed out as a roadmap, matching the reference's 7-page structure.
+    nav_row = 8
+    nav_items = [
+        ("01 Executive Summary", "01 Exec Summary"), ("02 Profitability", "02 Profitability"),
+        ("03 Tax Position", "03 Tax Position"), ("04 Debt & Liquidity", None),
+        ("05 Wealth of Group", None), ("06 Reorg & LCGE", None), ("07 Risk & Alerts", None),
+    ]
+    col_i = 2
+    for label, target in nav_items:
+        c = wsx.cell(row=nav_row, column=col_i, value=label)
+        if target:
+            c.font = Font(size=9, bold=(target == "01 Exec Summary"), color=NAVY)
+            if target == "01 Exec Summary":
+                c.border = Border(bottom=Side(style="medium", color=GOLD))
+        else:
+            c.font = Font(size=9, color="C7C2B8", italic=True)
+        col_i += 2
+    wsx.row_dimensions[nav_row].height = 16
+    for col in "BCDEFGHIJKLM":
+        wsx[f"{col}9"].border = Border(bottom=Side(style="thin", color="D8D2C4"))
+
+    wsx.merge_cells("B11:M12")
+    wsx["B11"] = ("The one-page summary — six headline numbers below, each labelled with its data "
+                  "confidence so nothing is trusted more than it should be. The 4 left-hand cards track "
+                  "the fiscal year selected on 02 Profitability (FY2025 by default).")
+    wsx["B11"].font = Font(size=9.5, italic=True, color=GREY)
+    wsx["B11"].alignment = Alignment(wrap_text=True, vertical="top")
+
+    # 6 KPI cards in one row, matching the reference layout
     er = "'Entity Register'!"
-    flat_card(wsx, 11, 2, 2, "Group Revenue", f"=SUM({er}C5:C20)", sub="FY2025")
-    flat_card(wsx, 11, 4, 2, "Group EBITDA", f"=SUM({er}J5:J20)", sub="FY2025")
-    flat_card(wsx, 11, 6, 2, "Group Net Income", f"=SUM({er}K5:K20)", sub="FY2025")
-    flat_card(wsx, 11, 8, 2, "Eff. Tax Rate", f"=IFERROR(SUM({er}I5:I20)/(SUM({er}K5:K20)+SUM({er}I5:I20)),0)", fmt=PCT)
-    flat_card(wsx, 11, 10, 2, "Loss Entities", f'=COUNTIF({er}K5:K20,"<0")&" / "&COUNTA({er}A5:A20)', fmt="@")
+    kpi_row = 14
+    flat_card(wsx, kpi_row, 2, 2, "Group Revenue", f"=SUM({er}C5:C20)",
+              sub=(f'=TEXT((SUM({er}C5:C20)-(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],'
+                   '"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2023")))/'
+                   '(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],"Operating Revenue",'
+                   'Fact_TrialBalance[FiscalYear],"FY2023")),"+0.0%;-0.0%")&" vs FY2023"'))
+    flat_card(wsx, kpi_row, 4, 2, "Group EBITDA", f"=SUM({er}J5:J20)",
+              sub=f'=TEXT(SUM({er}J5:J20)/SUM({er}C5:C20),"0.0%")&" margin"')
+    flat_card(wsx, kpi_row, 6, 2, "Consolidated Eff. Tax Rate",
+              f"=IFERROR(SUM({er}I5:I20)/(SUM({er}K5:K20)+SUM({er}I5:I20)),0)", fmt=PCT)
+    flat_card(wsx, kpi_row, 8, 2, "Entities in Loss Position",
+              f'=COUNTIF({er}K5:K20,"<0")&" / "&COUNTA({er}A5:A20)', fmt="@",
+              sub=f'=TEXT(COUNTIF({er}K5:K20,"<0")/COUNTA({er}A5:A20),"0%")&" of group"')
+    flat_card(wsx, kpi_row, 10, 2, "Group Net Worth", '="pending"', fmt="@",
+              sub="needs CaseWare balance sheets")
+    flat_card(wsx, kpi_row, 12, 2, "SBD Utilization (14 of 16)", "=" + str(round(sbd_group_total)),
+              sub=f"{sbd_group_total/500000:.1%} of $500,000, excl. 2 entities' own claims")
+    wsx[f"{get_column_letter(12)}{kpi_row+1}"].number_format = MONEY
 
-    # Data confidence legend
-    conf_row = 17
-    wsx.merge_cells(f"B{conf_row}:L{conf_row}")
+    # Data confidence — bordered box, matching the reference's card style
+    conf_row = kpi_row + 6
+    wsx.merge_cells(f"B{conf_row}:M{conf_row}")
     wsx[f"B{conf_row}"] = "Data confidence"
     wsx[f"B{conf_row}"].font = Font(size=13, bold=True, color=NAVY)
+    wsx[f"N{conf_row}"] = None
     conf_lines = [
-        (GREEN, f"P&L, all {len(entity_ids)} entities in scope (2 family trusts excluded per instruction) — "
-                "every entity rebuilt fresh from its raw CaseWare WTB (FY2023–FY2025) and independently "
-                "cross-validated: FY2025 Net Income matches the project's Validation Log exactly, to the penny."),
-        (GOLD, "Restaurant IndiaRosa 2 — additionally cross-checked against its Corporate Taxprep export: "
-               "Income Tax and FY2024 Net Income both match the WTB exactly."),
-        (GOLD, "Associated-group SBD & GRIP (14 entities) — real, from IndiaRosa 2's Taxprep SLIPA schedule. "
-               "Excludes IndiaRosa 2's own SBD (not found in this export)."),
+        (GREEN, f"P&L ({len(entity_ids)}/{len(entity_ids)} entities) — every entity rebuilt fresh from its "
+                "raw CaseWare WTB and validated to the penny (FY2025 Net Income matches the project's "
+                "Validation Log exactly for all of them)."),
+        (GOLD, "SBD & GRIP — real, cross-checked against Corporate Taxprep (14 of 16 entities; excludes "
+               "IndiaRosa 2 & Sandhu & Sandhu's own claims, not found in that export)."),
         (GREY, "RDTOH & CDA — confirmed NOT present in the Taxprep export tested (see 03 Tax Position)."),
-        (GREY, "One unexpected entity found in the Taxprep data (9475-3381 Québec Inc.) has no WTB supplied "
-               "and is not modeled — needs confirmation on whether it belongs in the group."),
-        (GREY, "Group-level Revenue/EBITDA are within ~0.5% of the Section 6 benchmark despite every entity's own "
-               "Net Income matching exactly — a small residual category-boundary difference likely remains in 1–2 "
-               "entities (see Notes & Validation)."),
-        (GREY, "Balance sheets / consolidated net worth — not available; the WTB export is income-statement only."),
+        (GREY, "Balance sheet / consolidated net worth — not available; the WTB export is income-statement only."),
+        (RED, "One unexpected entity (9475-3381 Québec Inc.) appears in the Taxprep data but has no WTB and "
+              "isn't in scope — needs your confirmation on whether it belongs in the group."),
+        (GREY, "Group-level Revenue/EBITDA are within ~0.5%/1.8% of the Section 6 benchmark despite every "
+               "entity's own Net Income matching exactly — a small residual category difference likely "
+               "remains in 1–2 entities (see Notes & Validation)."),
     ]
-    r = conf_row + 1
+    box_top = conf_row + 1
+    r = box_top
     for color, text in conf_lines:
         wsx[f"B{r}"] = DOT_GREEN
         wsx[f"B{r}"].font = Font(color=color, bold=True, size=11)
-        wsx.merge_cells(f"C{r}:L{r}")
+        wsx.merge_cells(f"C{r}:M{r}")
         wsx[f"C{r}"] = text
         wsx[f"C{r}"].font = Font(size=9.5, color="1A1A1A")
         wsx[f"C{r}"].alignment = Alignment(wrap_text=True, vertical="top")
+        wsx.row_dimensions[r].height = 28
+        r += 1
+    box_bottom = r - 1
+    for rr in range(box_top, box_bottom + 1):
+        for cc in range(2, 14):
+            wsx.cell(row=rr, column=cc).border = Border(
+                left=thin if cc == 2 else None, right=thin if cc == 13 else None,
+                top=thin if rr == box_top else None, bottom=thin if rr == box_bottom else None,
+            )
+
+    # Notable movers, FY2023 -> FY2025 (real, computed from the fact table)
+    nm_row = box_bottom + 2
+    wsx.merge_cells(f"B{nm_row}:M{nm_row}")
+    wsx[f"B{nm_row}"] = "Notable movers, FY2023 → FY2025"
+    wsx[f"B{nm_row}"].font = Font(size=13, bold=True, color=NAVY)
+
+    def mover_card(top_row, left_col, width, label, label_color, entity_name, fy23, fy25):
+        col = get_column_letter(left_col)
+        col2 = get_column_letter(left_col + width - 1)
+        wsx.merge_cells(f"{col}{top_row}:{col2}{top_row}")
+        c = wsx[f"{col}{top_row}"]
+        c.value = label
+        c.font = Font(size=9, bold=True, color=label_color)
+        c.alignment = Alignment(horizontal="left", indent=1)
+        wsx.merge_cells(f"{col}{top_row+1}:{col2}{top_row+1}")
+        n = wsx[f"{col}{top_row+1}"]
+        n.value = entity_name
+        n.font = Font(size=12, bold=True, color=NAVY)
+        n.alignment = Alignment(horizontal="left", indent=1)
+        delta = fy25 - fy23
+        wsx.merge_cells(f"{col}{top_row+2}:{col2}{top_row+2}")
+        d = wsx[f"{col}{top_row+2}"]
+        d.value = f"Net income: ${fy23:,.0f} → ${fy25:,.0f} ({'+'if delta>=0 else ''}{delta:,.0f})"
+        d.font = Font(size=9.5, color="1A1A1A")
+        d.alignment = Alignment(horizontal="left", indent=1)
+        for rr in range(top_row, top_row + 3):
+            for cc in range(left_col, left_col + width):
+                cell = wsx.cell(row=rr, column=cc)
+                cell.fill = CARD_FILL
+                cell.border = CARD_BORDER
+
+    mr = nm_row + 1
+    mover_card(mr, 2, 5, "BIGGEST IMPROVEMENT", GREEN, biggest_improvement[1],
+               biggest_improvement[2], biggest_improvement[3])
+    mover_card(mr, 8, 6, "BIGGEST DECLINE", RED, biggest_decline[1],
+               biggest_decline[2], biggest_decline[3])
+
+    # Management commentary — auto-composed from real deltas
+    mc_row = mr + 4
+    wsx.merge_cells(f"B{mc_row}:M{mc_row}")
+    wsx[f"B{mc_row}"] = "Management commentary"
+    wsx[f"B{mc_row}"].font = Font(size=13, bold=True, color=NAVY)
+    wsx.merge_cells(f"B{mc_row+1}:M{mc_row+1}")
+    wsx[f"B{mc_row+1}"] = "Auto-generated from FY2023 → FY2025 movement — every figure ties to the raw WTB data."
+    wsx[f"B{mc_row+1}"].font = Font(size=8.5, italic=True, color=GREY)
+
+    cbox_top = mc_row + 2
+    bullets = [
+        ('="—  Group revenue grew from $"&TEXT(-SUMIFS(Fact_TrialBalance[Amount],'
+         'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2023"),"#,##0")&'
+         '" (FY2023) to $"&TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],'
+         '"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2025"),"#,##0")&" (FY2025), up "&'
+         'TEXT((-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],"Operating Revenue",'
+         'Fact_TrialBalance[FiscalYear],"FY2025")/-SUMIFS(Fact_TrialBalance[Amount],'
+         'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2023"))-1,"0.0%")&"."'),
+        (f'="—  Group EBITDA margin moved from {ebitda23_margin:.1%} (FY2023) to {ebitda25_margin:.1%} '
+         f'(FY2025)."'),
+        (f'="—  Consolidated effective tax rate moved from {tax23_rate:.1%} (FY2023) to {tax25_rate:.1%} '
+         f'(FY2025)."'),
+        (f'="—  Entities in a loss position: {loss_fy23} of {len(entity_ids)} in FY2023, versus "&'
+         f'COUNTIF({er}K5:K20,"<0")&" of "&COUNTA({er}A5:A20)&" in FY2025."'),
+        (f'="—  SBD: ${sbd_group_total:,.0f} of the $500,000 federal limit accounted for across the 14 '
+         f'associated corporations with data in IndiaRosa 2\'s Taxprep export — IndiaRosa 2\'s and Sandhu & '
+         f'Sandhu\'s own claims are not in that export, so this is a floor, not the group total."'),
+        (f'="—  Biggest mover: {biggest_improvement[1]} (net income +${biggest_improvement[4]:,.0f}) '
+         f'vs. {biggest_decline[1]} ({biggest_decline[4]:,.0f})."'),
+    ]
+    r = cbox_top
+    for formula in bullets:
+        wsx.merge_cells(f"B{r}:M{r}")
+        wsx[f"B{r}"] = formula
+        wsx[f"B{r}"].font = Font(size=9.5, color="1A1A1A")
+        wsx[f"B{r}"].alignment = Alignment(wrap_text=True, vertical="top", indent=1)
         wsx.row_dimensions[r].height = 26
         r += 1
+    cbox_bottom = r - 1
+    for rr in range(cbox_top, cbox_bottom + 1):
+        for cc in range(2, 14):
+            wsx.cell(row=rr, column=cc).border = Border(
+                left=thin if cc == 2 else None, right=thin if cc == 13 else None,
+                top=thin if rr == cbox_top else None, bottom=thin if rr == cbox_bottom else None,
+            )
 
-    # IndiaRosa 2's own 3-year story (the one entity with real 3-year data)
-    story_row = r + 1
-    wsx.merge_cells(f"B{story_row}:L{story_row}")
-    wsx[f"B{story_row}"] = "Restaurant IndiaRosa 2 — 3-year trend (real, FY2023→FY2025)"
-    wsx[f"B{story_row}"].font = Font(size=13, bold=True, color=NAVY)
-    in2_fy23_rev = -next(x[3] for x in in2["rows"] if x[1] == "Operating Revenue" and x[2] == "FY2023")
-    in2_fy25_rev = -next(x[3] for x in in2["rows"] if x[1] == "Operating Revenue" and x[2] == "FY2025")
-    wsx[f"B{story_row+1}"] = (
-        f"Revenue: ${in2_fy23_rev:,.0f} (FY2023) → ${in2_fy25_rev:,.0f} (FY2025)   |   "
-        f"Net Income: ${in2['net_income']['FY2023']:,.0f} → ${in2['net_income']['FY2025']:,.0f}"
-    )
-    wsx[f"B{story_row+1}"].font = Font(size=10, color=NAVY, bold=True)
-    wsx.merge_cells(f"B{story_row+1}:L{story_row+1}")
+    # Group revenue & EBITDA, FY2023 vs FY2025 — clustered bar chart
+    chart_row = cbox_bottom + 2
+    wsx.merge_cells(f"B{chart_row}:M{chart_row}")
+    wsx[f"B{chart_row}"] = "Group revenue & EBITDA, FY2023 vs FY2025"
+    wsx[f"B{chart_row}"].font = Font(size=13, bold=True, color=NAVY)
 
-    group_row = story_row + 3
-    wsx.merge_cells(f"B{group_row}:L{group_row}")
-    wsx[f"B{group_row}"] = f"Group-wide, {len(entity_ids)} entities — 3-year trend (real, FY2023→FY2025)"
-    wsx[f"B{group_row}"].font = Font(size=13, bold=True, color=NAVY)
-    wsx[f"B{group_row+1}"] = (
-        '="Revenue: $"&TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],'
-        '"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2023"),"#,##0")&" (FY2023) → $"&'
-        'TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],"Operating Revenue",'
-        'Fact_TrialBalance[FiscalYear],"FY2025"),"#,##0")&" (FY2025)   |   Net Income: $"&'
-        'TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[FiscalYear],"FY2023"),"#,##0")&'
-        '" → $"&TEXT(-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[FiscalYear],"FY2025"),"#,##0")'
-    )
-    wsx[f"B{group_row+1}"].font = Font(size=10, color=NAVY, bold=True)
-    wsx.merge_cells(f"B{group_row+1}:L{group_row+1}")
+    data_row = chart_row + 1
+    wsx[f"B{data_row}"] = "FiscalYear"
+    wsx[f"C{data_row}"] = "Revenue"
+    wsx[f"D{data_row}"] = "EBITDA"
+    for c in (f"B{data_row}", f"C{data_row}", f"D{data_row}"):
+        wsx[c].font = Font(size=8, color=GREY)
+    for i, fy in enumerate(["FY2023", "FY2025"]):
+        rr = data_row + 1 + i
+        wsx[f"B{rr}"] = fy
+        wsx[f"C{rr}"] = (f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Category],'
+                          f'"Operating Revenue",Fact_TrialBalance[FiscalYear],"{fy}")')
+        excl = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
+        wsx[f"D{rr}"] = (f'=-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[FiscalYear],"{fy}")'
+                          f'-SUMPRODUCT((Fact_TrialBalance[FiscalYear]="{fy}")*'
+                          f'(ISNUMBER(MATCH(Fact_TrialBalance[Category],{{"{excl}"}},0)))*Fact_TrialBalance[Amount]))')
+        wsx[f"C{rr}"].number_format = MONEY
+        wsx[f"D{rr}"].number_format = MONEY
+    trend_chart = BarChart()
+    trend_chart.type = "col"
+    trend_chart.title = None
+    trend_chart.style = 10
+    tdata = Reference(wsx, min_col=3, max_col=4, min_row=data_row, max_row=data_row + 2)
+    tcats = Reference(wsx, min_col=2, min_row=data_row + 1, max_row=data_row + 2)
+    trend_chart.add_data(tdata, titles_from_data=True)
+    trend_chart.set_categories(tcats)
+    trend_chart.height = 9
+    trend_chart.width = 24
+    wsx.add_chart(trend_chart, f"B{data_row + 4}")
 
-    for col in "ABCDEFGHIJKL":
-        wsx.column_dimensions[col].width = wsx.column_dimensions[col].width or 14
+    # Performance by segment — table + horizontal bar chart
+    seg_row = data_row + 20
+    wsx.merge_cells(f"B{seg_row}:M{seg_row}")
+    wsx[f"B{seg_row}"] = "Performance by segment, FY2025"
+    wsx[f"B{seg_row}"].font = Font(size=13, bold=True, color=NAVY)
+
+    seg_hdr = seg_row + 1
+    seg_headers = ["Segment", "# Entities", "Revenue", "EBITDA", "Margin"]
+    for i, h in enumerate(seg_headers):
+        c = wsx.cell(row=seg_hdr, column=2 + i, value=h)
+        c.font = Font(bold=True, color=WHITE)
+        c.fill = TEAL_FILL
+    segments_present = sorted({entity_segment[e] for e in entity_ids})
+    for i, seg in enumerate(segments_present):
+        rr = seg_hdr + 1 + i
+        wsx.cell(row=rr, column=2, value=seg)
+        # Count entities via Dim_Entity, not rows in Fact_TrialBalance — an
+        # entity with zero operating revenue has no "Operating Revenue" row
+        # at all (zero-amount rows are dropped), which would undercount it.
+        wsx.cell(row=rr, column=3, value=f'=COUNTIF(Dim_Entity[Segment],"{seg}")')
+        # Revenue here = Operating Revenue + Investment & Other Income, to
+        # match EBITDA's income scope — HoldCos earn almost entirely via
+        # intercompany dividends/interest (Investment & Other Income), so
+        # Operating Revenue alone would understate it and produce a
+        # nonsensical >100% "margin".
+        wsx.cell(row=rr, column=4,
+                 value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Segment],"{seg}",'
+                       f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2025")'
+                       f'-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Segment],"{seg}",'
+                       f'Fact_TrialBalance[Category],"Investment & Other Income",Fact_TrialBalance[FiscalYear],"FY2025")')
+        excl = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
+        wsx.cell(row=rr, column=5,
+                 value=f'=-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Segment],"{seg}",'
+                       f'Fact_TrialBalance[FiscalYear],"FY2025")'
+                       f'-SUMPRODUCT((Fact_TrialBalance[Segment]="{seg}")*'
+                       f'(Fact_TrialBalance[FiscalYear]="FY2025")*'
+                       f'(ISNUMBER(MATCH(Fact_TrialBalance[Category],{{"{excl}"}},0)))*Fact_TrialBalance[Amount]))')
+        wsx.cell(row=rr, column=6, value=f"=IFERROR(E{rr}/D{rr},0)")
+        wsx.cell(row=rr, column=4).number_format = MONEY
+        wsx.cell(row=rr, column=5).number_format = MONEY
+        wsx.cell(row=rr, column=6).number_format = PCT
+    seg_last = seg_hdr + len(segments_present)
+
+    seg_chart = BarChart()
+    seg_chart.type = "bar"
+    seg_chart.title = "Revenue & EBITDA by Segment"
+    seg_chart.style = 10
+    seg_data = Reference(wsx, min_col=4, max_col=5, min_row=seg_hdr, max_row=seg_last)
+    seg_cats = Reference(wsx, min_col=2, min_row=seg_hdr + 1, max_row=seg_last)
+    seg_chart.add_data(seg_data, titles_from_data=True)
+    seg_chart.set_categories(seg_cats)
+    seg_chart.height = 9
+    seg_chart.width = 22
+    wsx.add_chart(seg_chart, f"G{seg_hdr}")
+
+    wsx.merge_cells(f"B{seg_last+1}:F{seg_last+1}")
+    wsx[f"B{seg_last+1}"] = ("\"Revenue\" here = Operating Revenue + Investment & Other Income, matching "
+                              "EBITDA's income scope — HoldCos earn mainly via intercompany dividends/interest.")
+    wsx[f"B{seg_last+1}"].font = Font(size=8, italic=True, color=GREY)
+    wsx[f"B{seg_last+1}"].alignment = Alignment(wrap_text=True)
 
     # ------------------------------------------------------------------ #
     # Sheet: 02 Profitability (entity + FY selector, KPI cards, category chart)
