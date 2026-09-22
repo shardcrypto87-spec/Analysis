@@ -15,7 +15,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, NamedStyle
 from openpyxl.chart import BarChart, PieChart, Reference
 from openpyxl.utils import get_column_letter
-from openpyxl.formatting.rule import CellIsRule
+from openpyxl.formatting.rule import CellIsRule, DataBarRule
 
 SRC = "data/Sandhu_Excel_Model_Data.xlsx"
 OUT = "output/Sandhu_Group_Interactive_Dashboard.xlsx"
@@ -90,7 +90,7 @@ def badge(ws, merge_range, text):
         ws.cell(row=int(row), column=col_idx).fill = GOLD_FILL
 
 
-def flat_card(ws, top_row, left_col, width, label, formula, fmt=MONEY, sub=None):
+def flat_card(ws, top_row, left_col, width, label, formula, fmt=MONEY, sub=None, val_font_size=None):
     col = get_column_letter(left_col)
     col2 = get_column_letter(left_col + width - 1)
     ws.merge_cells(f"{col}{top_row}:{col2}{top_row}")
@@ -102,7 +102,7 @@ def flat_card(ws, top_row, left_col, width, label, formula, fmt=MONEY, sub=None)
     ws.merge_cells(f"{col}{top_row+1}:{col2}{top_row+2}")
     vc = ws[f"{col}{top_row+1}"]
     vc.value = formula
-    vc.font = FLAT_VAL
+    vc.font = FLAT_VAL if val_font_size is None else Font(name="Calibri", size=val_font_size, bold=True, color=NAVY)
     vc.number_format = fmt
     vc.fill = CARD_FILL
     vc.alignment = Alignment(horizontal="left", vertical="center", indent=1)
@@ -1077,72 +1077,136 @@ def main():
     ws3 = wb.create_sheet("Group Summary")
     ws3.sheet_view.showGridLines = False
     ws3.sheet_properties.tabColor = NAVY
-    paint_background(ws3, max_row=25, max_col=10)
-    back_link(ws3, "B1")
-    ws3.merge_cells("B2:H3")
-    ws3["B2"] = "Group Summary — driven by 01 Exec Summary's fiscal-year selector"
-    ws3["B2"].font = H1
-    ws3["B2"].fill = NAVY_FILL
-    for col in "CDEFGH":
-        ws3[f"{col}2"].fill = NAVY_FILL
-        ws3[f"{col}3"].fill = NAVY_FILL
-    for col, w in zip("ABCDEFGH", [3, 18, 18, 18, 18, 3, 18, 18]):
+    for col, w in zip("ABCDEFGHIJKL", [3, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]):
         ws3.column_dimensions[col].width = w
+    paint_background(ws3, max_row=45, max_col=13)
+    back_link(ws3, "B1")
 
-    ws3["B5"] = f"{len(entity_ids)}-entity group total (per Entity Register) — full scope (2 family trusts excluded)"
-    ws3["B5"].font = Font(italic=True, size=9, color=GREY)
+    badge(ws3, "B2:E2", "GROUP SUMMARY — ALL ENTITIES, ONE FISCAL YEAR")
+    # Live "showing FYxxxx" chip, sourced from 01 Exec Summary's selector —
+    # this page has no selector of its own, it always mirrors Exec Summary.
+    ws3.merge_cells("K2:L2")
+    ws3["K2"] = "='01 Exec Summary'!$K$2"
+    ws3["K2"].font = Font(bold=True, size=11, color=NAVY)
+    ws3["K2"].fill = GOLD_FILL
+    ws3["K2"].alignment = Alignment(horizontal="center", vertical="center")
+    ws3["K2"].border = CARD_BORDER
+    ws3["J2"] = "Showing"
+    ws3["J2"].font = Font(size=8, bold=True, color=GREY)
+    ws3["J2"].alignment = Alignment(horizontal="right", vertical="center")
 
-    r0 = 6
-    style_kpi_card(ws3, r0, 2, "GROUP REVENUE", "=SUM('Entity Register'!C5:C20)")
-    style_kpi_card(ws3, r0, 4, "GROUP EBITDA", "=SUM('Entity Register'!J5:J20)", big_fill=TEAL_FILL)
-    style_kpi_card(ws3, r0, 7, "GROUP NET INCOME", "=SUM('Entity Register'!K5:K20)")
+    ws3.merge_cells("B4:L5")
+    ws3["B4"] = "Sandhu Group — Group Summary"
+    ws3["B4"].font = Font(name="Calibri", size=18, bold=True, color=NAVY)
+    ws3["B4"].alignment = Alignment(vertical="center")
+    ws3.merge_cells("B6:L6")
+    ws3["B6"] = (f'="{len(entity_ids)}-entity group total (per Entity Register), fiscal year "&'
+                 "'01 Exec Summary'!$K$2&\" — full scope, 2 family trusts excluded. Change the year on "
+                 '01 Exec Summary."')
+    ws3["B6"].font = Font(size=9.5, italic=True, color=GREY)
+    ws3["B6"].alignment = Alignment(wrap_text=True)
 
-    r1 = r0 + 4
-    style_kpi_card(ws3, r1, 2, "GROUP INCOME TAX", "=SUM('Entity Register'!I5:I20)", big_fill=TEAL_FILL)
-    style_kpi_card(
-        ws3, r1, 4, "EFFECTIVE TAX RATE",
+    r0 = 9
+    flat_card(ws3, r0, 2, 2, "Group Revenue", "=SUM('Entity Register'!C5:C20)")
+    flat_card(ws3, r0, 4, 2, "Group EBITDA", "=SUM('Entity Register'!J5:J20)",
+              sub="=TEXT(SUM('Entity Register'!J5:J20)/SUM('Entity Register'!C5:C20),\"0.0%\")&\" margin\"")
+    flat_card(ws3, r0, 6, 2, "Group Net Income", "=SUM('Entity Register'!K5:K20)")
+    flat_card(ws3, r0, 8, 2, "Group Income Tax", "=SUM('Entity Register'!I5:I20)")
+    flat_card(
+        ws3, r0, 10, 2, "Effective Tax Rate",
         "=IFERROR(SUM('Entity Register'!I5:I20)/(SUM('Entity Register'!K5:K20)+SUM('Entity Register'!I5:I20)),0)",
-        fmt=PCT, big_fill=TEAL_FILL,
+        fmt=PCT,
     )
-    style_kpi_card(ws3, r1, 7, "ENTITIES IN MODEL", "=COUNTA('Entity Register'!A5:A20)", fmt='0', big_fill=TEAL_FILL)
 
-    # Per-entity rollup + chart
-    seg_row0 = r1 + 5
-    ws3.merge_cells(f"B{seg_row0}:D{seg_row0}")
-    ws3[f"B{seg_row0}"] = "Revenue & Net Income by Entity"
-    ws3[f"B{seg_row0}"].font = H1
-    ws3[f"B{seg_row0}"].fill = NAVY_FILL
-    ws3[f"C{seg_row0}"].fill = NAVY_FILL
-    ws3[f"D{seg_row0}"].fill = NAVY_FILL
+    r1 = r0 + 6
+    flat_card(ws3, r1, 2, 2, "Entities in Model", "=COUNTA('Entity Register'!A5:A20)", fmt="0")
+    flat_card(ws3, r1, 4, 2, "Entities in Loss Position",
+              '=COUNTIF(\'Entity Register\'!K5:K20,"<0")&" / "&COUNTA(\'Entity Register\'!A5:A20)', fmt="@")
+    flat_card(ws3, r1, 6, 3, "Top Performer", "=INDEX('Entity Register'!A5:A20,MATCH(MAX('Entity Register'!K5:K20),"
+                                               "'Entity Register'!K5:K20,0))", fmt="@", val_font_size=11)
+    flat_card(ws3, r1, 9, 3, "Biggest Loss", "=INDEX('Entity Register'!A5:A20,MATCH(MIN('Entity Register'!K5:K20),"
+                                              "'Entity Register'!K5:K20,0))", fmt="@", val_font_size=11)
 
-    hdr = seg_row0 + 1
-    ws3[f"B{hdr}"] = "EntityName"
-    ws3[f"C{hdr}"] = "Revenue"
-    ws3[f"D{hdr}"] = "Net Income"
-    for c in (f"B{hdr}", f"C{hdr}", f"D{hdr}"):
-        ws3[c].font = Font(bold=True, color=WHITE)
-        ws3[c].fill = TEAL_FILL
-    for i in range(len(entity_ids)):
-        rr = hdr + 1 + i
-        src_rr = 5 + i
-        ws3[f"B{rr}"] = f"='Entity Register'!A{src_rr}"
-        ws3[f"C{rr}"] = f"='Entity Register'!C{src_rr}"
-        ws3[f"D{rr}"] = f"='Entity Register'!K{src_rr}"
-        ws3[f"C{rr}"].number_format = MONEY
-        ws3[f"D{rr}"].number_format = MONEY
-    seg_last = hdr + len(entity_ids)
+    # Entity leaderboard — sorted by Net Income (highest first), with data
+    # bars so the spread across entities reads at a glance.
+    lb_row0 = r1 + 6
+    ws3.merge_cells(f"B{lb_row0}:L{lb_row0}")
+    ws3[f"B{lb_row0}"] = "Entity Leaderboard — ranked by Net Income"
+    ws3[f"B{lb_row0}"].font = Font(size=13, bold=True, color=NAVY)
+
+    ws3.column_dimensions["B"].width = 6
+    ws3.column_dimensions["C"].width = 30
+    ws3.column_dimensions["D"].width = 14
+
+    lhdr = lb_row0 + 1
+    lheaders = ["Rank", "Entity", "Industry", "Revenue", "EBITDA", "EBITDA Margin", "Net Income"]
+    for i, h in enumerate(lheaders):
+        c = ws3.cell(row=lhdr, column=2 + i, value=h)
+        c.font = Font(bold=True, color=WHITE)
+        c.fill = TEAL_FILL
+
+    # Pre-sort entities by FY2025 net income for a sensible default row
+    # order (Excel formulas can't re-sort rows live without dynamic-array
+    # SORT(), which isn't available in every Excel version) — ranks and
+    # values themselves are still live formulas, tied to the selected year.
+    sorted_entities = sorted(entity_ids, key=lambda e: -ni_by_entity_fy[e].get("FY2025", 0), reverse=True)
+    er_row_by_entity = {eid: 5 + i for i, eid in enumerate(entity_ids)}
+    for i, eid in enumerate(sorted_entities):
+        rr = lhdr + 1 + i
+        src_rr = er_row_by_entity[eid]
+        rc = ws3.cell(row=rr, column=2, value=i + 1)
+        rc.alignment = Alignment(horizontal="center")
+        ec = ws3.cell(row=rr, column=3, value=f"='Entity Register'!A{src_rr}")
+        ec.alignment = Alignment(horizontal="left", indent=1)
+        ws3.cell(row=rr, column=4, value=entity_industry[eid])
+        ws3.cell(row=rr, column=5, value=f"='Entity Register'!C{src_rr}").number_format = MONEY
+        ws3.cell(row=rr, column=6, value=f"='Entity Register'!J{src_rr}").number_format = MONEY
+        # IF, not IFERROR-to-0: a HoldCo with $0 Operating Revenue but real
+        # profit (via intercompany dividends, booked as Investment & Other
+        # Income) would otherwise show a misleading "0% margin".
+        ws3.cell(row=rr, column=7, value=f'=IF(E{rr}=0,"n/m",F{rr}/E{rr})').number_format = PCT
+        nc = ws3.cell(row=rr, column=8, value=f"='Entity Register'!K{src_rr}")
+        nc.number_format = MONEY
+    lb_last = lhdr + len(sorted_entities)
+
+    tab_lb = Table(displayName="GroupLeaderboard", ref=f"B{lhdr}:H{lb_last}")
+    tab_lb.tableStyleInfo = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
+    ws3.add_table(tab_lb)
+
+    ws3.conditional_formatting.add(
+        f"E{lhdr+1}:E{lb_last}",
+        DataBarRule(start_type="min", end_type="max", color="9DC3E6"),
+    )
+    ws3.conditional_formatting.add(
+        f"H{lhdr+1}:H{lb_last}",
+        DataBarRule(start_type="num", start_value=0, end_type="max", color="70AD47"),
+    )
+    ws3.conditional_formatting.add(
+        f"H{lhdr+1}:H{lb_last}",
+        CellIsRule(operator="lessThan", formula=["0"], font=Font(color=RED, bold=True)),
+    )
+
+    ws3.merge_cells(f"B{lb_last+1}:L{lb_last+1}")
+    ws3[f"B{lb_last+1}"] = ("Revenue = Operating Revenue only. A few HoldCos show $0 here but real profit in "
+                             "Net Income — they earn via intercompany dividends/interest (Investment & Other "
+                             "Income), not operating sales; their EBITDA Margin shows \"n/m\" rather than a "
+                             "misleading 0%.")
+    ws3[f"B{lb_last+1}"].font = Font(size=8, italic=True, color=GREY)
+    ws3[f"B{lb_last+1}"].alignment = Alignment(wrap_text=True)
 
     chart2 = BarChart()
     chart2.type = "col"
-    chart2.title = "Revenue vs Net Income by Entity"
+    chart2.title = "Revenue vs Net Income by Entity (ranked)"
     chart2.style = 12
-    data2 = Reference(ws3, min_col=3, max_col=4, min_row=hdr, max_row=seg_last)
-    cats2 = Reference(ws3, min_col=2, min_row=hdr + 1, max_row=seg_last)
+    data2 = Reference(ws3, min_col=5, max_col=5, min_row=lhdr, max_row=lb_last)
+    data2b = Reference(ws3, min_col=8, max_col=8, min_row=lhdr, max_row=lb_last)
+    cats2 = Reference(ws3, min_col=3, min_row=lhdr + 1, max_row=lb_last)
     chart2.add_data(data2, titles_from_data=True)
+    chart2.add_data(data2b, titles_from_data=True)
     chart2.set_categories(cats2)
     chart2.height = 11
-    chart2.width = 24
-    ws3.add_chart(chart2, f"F{seg_row0}")
+    chart2.width = 30
+    ws3.add_chart(chart2, f"B{lb_last+3}")
 
     # ------------------------------------------------------------------ #
     # Sheet: Notes
