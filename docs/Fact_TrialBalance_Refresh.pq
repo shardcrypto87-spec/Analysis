@@ -1,10 +1,10 @@
 let
     // ====== EDIT THESE TWO LINES BEFORE EACH YEARLY REFRESH ======
-    FolderPath = "C:\Sandhu\WTB_2026\",
-    CurrentFY  = "FY2026",
+    FilePath  = "C:\Sandhu\Sandhu_G__2027.xlsx",
+    CurrentFY = "FY2027",
     // ==============================================================
 
-    // Derive the two comparison-year labels from CurrentFY (e.g. FY2026 -> FY2025, FY2024).
+    // Derive the two comparison-year labels from CurrentFY (e.g. FY2027 -> FY2026, FY2025).
     // The WTB's own "Final: <date>" column header is NOT trusted for this —
     // it can be stale by a year — so this is set explicitly instead.
     CurrentYearNum = Number.FromText(Text.End(CurrentFY, 4)),
@@ -18,31 +18,28 @@ let
     FilePrefixMap = Excel.CurrentWorkbook(){[Name="PQ_Dim_FilePrefix"]}[Content],
     DimEntity     = Excel.CurrentWorkbook(){[Name="Dim_Entity"]}[Content],
 
-    // ---- 1. Read every WTB file in the folder ----
-    SourceFiles = Folder.Files(FolderPath),
-    WTBFilesOnly = Table.SelectRows(SourceFiles, each Text.EndsWith([Name], "_WTB.xlsx")),
+    // ---- 1. Read every tab of the consolidated CaseWare export — one
+    // workbook, one tab per entity (the FY2026 example, Sandhu_G__2026.xlsx,
+    // confirmed this layout: 16 tabs, each shaped exactly like the old
+    // individual WTB files). The tab NAME is trusted as the FilePrefix only
+    // after a case-insensitive match against PQ_Dim_FilePrefix — a tab
+    // CaseWare didn't rename to its usual prefix (this happened for real in
+    // FY2026: one tab was left as the default "Sheet16") is deliberately
+    // NOT guessed into place here. It's excluded and surfaced in
+    // Unmapped_FilePrefix_Check instead, same as an unrecognized filename
+    // was under the old folder-of-files approach. ----
+    Workbook = Excel.Workbook(File.Contents(FilePath), null, true),
+    Sheets = Table.SelectColumns(Workbook, {"Name", "Data"}),
+    AddPrefixKey = Table.AddColumn(Sheets, "PrefixKey", each Text.Upper([Name])),
+    FilePrefixMapKeyed = Table.AddColumn(FilePrefixMap, "PrefixKey", each Text.Upper([FilePrefix])),
+    MergedPrefix = Table.NestedJoin(AddPrefixKey, {"PrefixKey"}, FilePrefixMapKeyed, {"PrefixKey"}, "PrefixJoin", JoinKind.LeftOuter),
+    ExpandPrefix = Table.ExpandTableColumn(MergedPrefix, "PrefixJoin", {"FilePrefix"}, {"FilePrefix"}),
+    RecognizedSheets = Table.SelectRows(ExpandPrefix, each [FilePrefix] <> null),
 
-    // FilePrefix = filename with the trailing "_<year>_WTB" stripped, e.g.
-    // "Res_In2_2026_WTB.xlsx" -> "Res_In2". Works regardless of the year value.
-    AddPrefix = Table.AddColumn(WTBFilesOnly, "FilePrefix", each
-        let
-            baseName = Text.BeforeDelimiter([Name], ".xlsx"),
-            parts = Text.Split(baseName, "_"),
-            prefixParts = List.RemoveLastN(parts, 2)
-        in
-            Text.Combine(prefixParts, "_")
-    ),
-
-    // Read each file's first (only) worksheet, raw — no header promotion,
-    // because column POSITION is trusted, not the header text (which
-    // includes a date that can be stale). Row 1 is skipped manually below.
-    AddSheet = Table.AddColumn(AddPrefix, "SheetData", each
-        let
-            wb = Excel.Workbook([Content], null, true),
-            firstSheet = wb{0}[Data]
-        in
-            Table.Skip(firstSheet, 1)
-    ),
+    // Read each tab raw — no header promotion, because column POSITION is
+    // trusted, not the header text (which includes a date that can be
+    // stale). Row 1 is skipped manually below.
+    AddSheet = Table.AddColumn(RecognizedSheets, "SheetData", each Table.Skip([Data], 1)),
 
     Combined = Table.SelectColumns(AddSheet, {"FilePrefix", "SheetData"}),
     Expanded = Table.ExpandTableColumn(Combined, "SheetData",

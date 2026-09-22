@@ -27,12 +27,16 @@ SRC = "data/Sandhu_Excel_Model_Data.xlsx"
 OUT = "output/Sandhu_Group_Interactive_Dashboard.xlsx"
 
 CATEGORIES = [
-    "Operating Revenue", "Investment & Other Income", "COGS", "Payroll & Benefits",
-    "Occupancy", "Marketing & Entertainment", "Administrative",
+    "Operating Revenue", "Investment & Other Income", "Gain on Sale", "COGS",
+    "Payroll & Benefits", "Occupancy", "Marketing & Entertainment", "Administrative",
     "Management Fees (Interco)", "Interest & Financing", "Repairs & Maintenance",
     "Amortization", "Other Operating", "Income Tax",
 ]
-INCOME_CATS = {"Operating Revenue", "Investment & Other Income"}
+# "Gain on Sale" (new in FY2026, Restaurant Héritaj — a one-time $300,000 item,
+# see Notes & Validation) is treated as income, not a recurring cost: excluded
+# from the Common-Size % cost-ratio comparison table, same as Investment &
+# Other Income, so a one-off gain doesn't get flagged as a cost-ratio outlier.
+INCOME_CATS = {"Operating Revenue", "Investment & Other Income", "Gain on Sale"}
 
 # --- palette (matches the reference "Consolidated Performance & Wealth
 # Report" mockup: cream page background, navy header/nav, gold accent) ------
@@ -201,13 +205,14 @@ def main():
     ws_c.append(["FY2023", "2023-03-31", "FY2023"])
     ws_c.append(["FY2024", "2024-03-31", "FY2024"])
     ws_c.append(["FY2025", "2025-03-31", "FY2025"])
+    ws_c.append(["FY2026", "2026-03-31", "FY2026"])
     for c in ws_c[1]:
         c.font = Font(bold=True, color=WHITE)
         c.fill = NAVY_FILL
     ws_c.column_dimensions["A"].width = 14
     ws_c.column_dimensions["B"].width = 14
     ws_c.column_dimensions["C"].width = 26
-    tab_c = Table(displayName="Dim_Calendar", ref="A1:C4")
+    tab_c = Table(displayName="Dim_Calendar", ref="A1:C5")
     tab_c.tableStyleInfo = TableStyleInfo(name="TableStyleMedium2", showRowStripes=True)
     ws_c.add_table(tab_c)
 
@@ -297,7 +302,7 @@ def main():
     wsx["K2"].fill = GOLD_FILL
     wsx["K2"].alignment = Alignment(horizontal="center", vertical="center")
     wsx["K2"].border = CARD_BORDER
-    dv_fy_master = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
+    dv_fy_master = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$5", allow_blank=False)
     wsx.add_data_validation(dv_fy_master)
     dv_fy_master.add(wsx["K2"])
 
@@ -644,7 +649,7 @@ def main():
     ws["H6"].font = Font(bold=True, size=12, color=NAVY)
     ws["H6"].fill = GOLD_FILL
     ws["H6"].alignment = Alignment(horizontal="center")
-    dv_fy_local = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
+    dv_fy_local = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$5", allow_blank=False)
     ws.add_data_validation(dv_fy_local)
     dv_fy_local.add(ws["H6"])
     ws["I6"] = "independent of 01 Exec Summary's selector — see note"
@@ -1313,7 +1318,7 @@ def main():
     # ------------------------------------------------------------------ #
     ws4 = wb.create_sheet("Notes & Validation")
     ws4.sheet_properties.tabColor = GREY
-    paint_background(ws4, max_row=45, max_col=3)
+    paint_background(ws4, max_row=60, max_col=3)
     ws4.column_dimensions["A"].width = 100
     back_link(ws4, "C1")
     notes = [
@@ -1322,7 +1327,30 @@ def main():
         f"Scope: all {len(entity_ids)} entities (both family trusts — Gurpreet Sandhu Trust, Harpreet Sandhu "
         "Trust — excluded from scope per instruction; ~$4-$10/yr activity per the handoff, immaterial). "
         "Every one of these was rebuilt fresh from its raw CaseWare WTB export in this session (not "
-        "carried over from any prior file) and covers 3 fiscal years: FY2023, FY2024, FY2025.",
+        "carried over from any prior file) and covers FY2023-FY2025 for all 16 entities, plus FY2026 for "
+        "15 of them (Sandhu & Sandhu Enr. pending — see below).",
+        "",
+        "FY2026 added from Sandhu_G__2026.xlsx — the single consolidated CaseWare export (16 tabs, one "
+        "per entity, same column layout as the individual WTB files) your accountant can prepare each "
+        "year-end instead of 16 separate files. Recommended as the ongoing yearly source: one document, "
+        "can't miss a company, can't mismatch years across files. As with every other WTB file seen in "
+        "this project, its column header dates are stale by one year — the column printed 'Final: "
+        "2025-03-31' is actually FY2026 (confirmed two ways: 15 of 16 entities' 'Prior' columns match "
+        "already-validated FY2025 to the cent, and Res_Ind's 'Final' column matches the standalone, "
+        "independently-confirmed Res_Ind_2026_WTB.xlsx exactly). Column POSITION is trusted, never the "
+        "header text.",
+        "",
+        "MISSING FY2026: Sandhu & Sandhu Enr.'s tab in Sandhu_G__2026.xlsx ('Sheet16' — never renamed, "
+        "unlike the other 15) is a byte-for-byte duplicate of the old standalone San_San_2025_WTB.xlsx, "
+        "not refreshed data — so there is no genuine FY2026 figure for this entity yet. Its FY2025 "
+        "figure is unaffected and stays as originally validated ($-15,821.17). A fresh San_San export is "
+        "needed before FY2026 can be added for it.",
+        "",
+        "New GIFI code: Restaurant Héritaj's FY2026 WTB includes account 45320 'Gain on sale' (GIFI "
+        "8211, $300,000) — not seen in any prior year for any entity. Per user decision, mapped to its "
+        "own 'Gain on Sale' category (kept separate from recurring Other Operating items) rather than "
+        "folded into the adjacent GIFI 8210 mapping. Added to GIFI_Master_Mapping_v2.xlsx so it "
+        "categorizes automatically in future years too.",
         "",
         "Missing: Sandhu & Sandhu Enr.'s Corporate Taxprep export (its WTB was supplied and is included).",
         "",
@@ -1384,7 +1412,7 @@ def main():
         c.alignment = Alignment(wrap_text=True, vertical="top")
         if i == 1:
             c.font = Font(bold=True, size=14, color=NAVY)
-        elif line.strip().startswith(("UNRESOLVED", "UNEXPECTED FILE")):
+        elif line.strip().startswith(("UNRESOLVED", "UNEXPECTED FILE", "MISSING FY2026")):
             c.font = Font(size=10, bold=True, color=RED)
         elif line.strip().startswith("VALIDATION"):
             c.font = Font(size=10, bold=True, color=GREEN)

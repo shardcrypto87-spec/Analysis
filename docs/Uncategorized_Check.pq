@@ -1,7 +1,7 @@
 let
     // ====== MUST MATCH the same two lines in Fact_TrialBalance_Refresh.pq ======
-    FolderPath = "C:\Sandhu\WTB_2026\",
-    CurrentFY  = "FY2026",
+    FilePath  = "C:\Sandhu\Sandhu_G__2027.xlsx",
+    CurrentFY = "FY2027",
     // ============================================================================
 
     CurrentYearNum = Number.FromText(Text.End(CurrentFY, 4)),
@@ -11,26 +11,20 @@ let
     GifiMap       = Excel.CurrentWorkbook(){[Name="PQ_GIFI_Mapping"]}[Content],
     FallbackMap   = Excel.CurrentWorkbook(){[Name="PQ_Fallback_MapNo"]}[Content],
     ExceptionsTbl = Excel.CurrentWorkbook(){[Name="PQ_Exceptions"]}[Content],
+    FilePrefixMap = Excel.CurrentWorkbook(){[Name="PQ_Dim_FilePrefix"]}[Content],
 
-    SourceFiles = Folder.Files(FolderPath),
-    WTBFilesOnly = Table.SelectRows(SourceFiles, each Text.EndsWith([Name], "_WTB.xlsx")),
+    // Same tab-name matching as Fact_TrialBalance_Refresh.pq (see its
+    // comments) — a tab whose name isn't recognized is excluded here too,
+    // not guessed into place.
+    Workbook = Excel.Workbook(File.Contents(FilePath), null, true),
+    Sheets = Table.SelectColumns(Workbook, {"Name", "Data"}),
+    AddPrefixKey = Table.AddColumn(Sheets, "PrefixKey", each Text.Upper([Name])),
+    FilePrefixMapKeyed = Table.AddColumn(FilePrefixMap, "PrefixKey", each Text.Upper([FilePrefix])),
+    MergedPrefix = Table.NestedJoin(AddPrefixKey, {"PrefixKey"}, FilePrefixMapKeyed, {"PrefixKey"}, "PrefixJoin", JoinKind.LeftOuter),
+    ExpandPrefix = Table.ExpandTableColumn(MergedPrefix, "PrefixJoin", {"FilePrefix"}, {"FilePrefix"}),
+    RecognizedSheets = Table.SelectRows(ExpandPrefix, each [FilePrefix] <> null),
 
-    AddPrefix = Table.AddColumn(WTBFilesOnly, "FilePrefix", each
-        let
-            baseName = Text.BeforeDelimiter([Name], ".xlsx"),
-            parts = Text.Split(baseName, "_"),
-            prefixParts = List.RemoveLastN(parts, 2)
-        in
-            Text.Combine(prefixParts, "_")
-    ),
-
-    AddSheet = Table.AddColumn(AddPrefix, "SheetData", each
-        let
-            wb = Excel.Workbook([Content], null, true),
-            firstSheet = wb{0}[Data]
-        in
-            Table.Skip(firstSheet, 1)
-    ),
+    AddSheet = Table.AddColumn(RecognizedSheets, "SheetData", each Table.Skip([Data], 1)),
 
     Combined = Table.SelectColumns(AddSheet, {"FilePrefix", "SheetData"}),
     Expanded = Table.ExpandTableColumn(Combined, "SheetData",
