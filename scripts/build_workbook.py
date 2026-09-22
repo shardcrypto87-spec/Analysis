@@ -269,16 +269,23 @@ def main():
 
     badge(wsx, "B2:H2", f"DRAFT MANAGEMENT REPORT — {len(entity_ids)}/{len(entity_ids)} ENTITIES "
                          "VALIDATED AGAINST CASEWARE")
-    # FY chips, top right — decorative (this page is a fixed FY2025-vs-FY2023
-    # snapshot, like the reference); '02 Profitability' has the live selector.
-    for i, (fy, is_current) in enumerate([("FY2023", False), ("FY2024", False), ("FY2025", True)]):
-        col = get_column_letter(11 + i)
-        c = wsx[f"{col}2"]
-        c.value = fy
-        c.font = Font(bold=True, size=9, color=WHITE if is_current else NAVY)
-        c.fill = NAVY_FILL if is_current else CARD_FILL
-        c.alignment = Alignment(horizontal="center", vertical="center")
-        c.border = CARD_BORDER
+    # Master fiscal-year selector — this is now the single source of truth
+    # for the whole workbook. '02 Profitability'!H6 (and everything
+    # downstream of it: Entity Register, Group Summary, these KPI cards)
+    # reads from this one cell, so picking a year here changes every sheet.
+    wsx["J2"] = "Select Fiscal Year"
+    wsx["J2"].font = Font(size=8, bold=True, color=GREY)
+    wsx["J2"].alignment = Alignment(horizontal="right", vertical="center")
+    wsx.merge_cells("K2:M2")
+    fy_selector_cell = "K2"
+    wsx["K2"] = "FY2025"
+    wsx["K2"].font = Font(bold=True, size=11, color=NAVY)
+    wsx["K2"].fill = GOLD_FILL
+    wsx["K2"].alignment = Alignment(horizontal="center", vertical="center")
+    wsx["K2"].border = CARD_BORDER
+    dv_fy_master = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
+    wsx.add_data_validation(dv_fy_master)
+    dv_fy_master.add(wsx["K2"])
 
     wsx.merge_cells("B4:M5")
     wsx["B4"] = "Sandhu Group — Consolidated Performance Report"
@@ -314,9 +321,12 @@ def main():
         wsx[f"{col}9"].border = Border(bottom=Side(style="thin", color="D8D2C4"))
 
     wsx.merge_cells("B11:M12")
-    wsx["B11"] = ("The one-page summary — six headline numbers below, each labelled with its data "
-                  "confidence so nothing is trusted more than it should be. The 4 left-hand cards track "
-                  "the fiscal year selected on 02 Profitability (FY2025 by default).")
+    wsx["B11"] = ('="The one-page summary — six headline numbers below, each labelled with its data '
+                  'confidence so nothing is trusted more than it should be. The Select Fiscal Year box '
+                  'above (top right) is the master control for the whole workbook — change it here and '
+                  '02 Profitability, Entity Register, Group Summary and the industry table below all '
+                  'follow. Currently showing "&$K$2&". The trend sections further down (Notable Movers, '
+                  'the revenue/EBITDA chart) stay fixed to FY2023→FY2025 regardless of this selector."')
     wsx["B11"].font = Font(size=9.5, italic=True, color=GREY)
     wsx["B11"].alignment = Alignment(wrap_text=True, vertical="top")
 
@@ -498,10 +508,11 @@ def main():
     trend_chart.width = 24
     wsx.add_chart(trend_chart, f"B{data_row + 4}")
 
-    # Performance by industry — table + horizontal bar chart
+    # Performance by industry — table + horizontal bar chart. Follows the
+    # master FY selector at K2 (same as the KPI cards above).
     seg_row = data_row + 20
     wsx.merge_cells(f"B{seg_row}:M{seg_row}")
-    wsx[f"B{seg_row}"] = "Performance by industry, FY2025"
+    wsx[f"B{seg_row}"] = '="Performance by industry, "&$K$2'
     wsx[f"B{seg_row}"].font = Font(size=13, bold=True, color=NAVY)
 
     seg_hdr = seg_row + 1
@@ -525,15 +536,15 @@ def main():
         # nonsensical >100% "margin".
         wsx.cell(row=rr, column=4,
                  value=f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
-                       f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],"FY2025")'
+                       f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],$K$2)'
                        f'-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
-                       f'Fact_TrialBalance[Category],"Investment & Other Income",Fact_TrialBalance[FiscalYear],"FY2025")')
+                       f'Fact_TrialBalance[Category],"Investment & Other Income",Fact_TrialBalance[FiscalYear],$K$2)')
         excl = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
         wsx.cell(row=rr, column=5,
                  value=f'=-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
-                       f'Fact_TrialBalance[FiscalYear],"FY2025")'
+                       f'Fact_TrialBalance[FiscalYear],$K$2)'
                        f'-SUMPRODUCT((Fact_TrialBalance[Industry]="{seg}")*'
-                       f'(Fact_TrialBalance[FiscalYear]="FY2025")*'
+                       f'(Fact_TrialBalance[FiscalYear]=$K$2)*'
                        f'(ISNUMBER(MATCH(Fact_TrialBalance[Category],{{"{excl}"}},0)))*Fact_TrialBalance[Amount]))')
         wsx.cell(row=rr, column=6, value=f"=IFERROR(E{rr}/D{rr},0)")
         wsx.cell(row=rr, column=4).number_format = MONEY
@@ -598,16 +609,16 @@ def main():
     ws.add_data_validation(dv_entity)
     dv_entity.add(ws["C6"])
 
-    ws["G6"] = "Select Fiscal Year"
+    ws["G6"] = "Fiscal Year"
     ws["G6"].font = LABEL
-    ws["H6"] = "FY2025"
+    # H6 mirrors the master selector on 01 Exec Summary — one control for
+    # the whole workbook. Not its own dropdown any more: change the year
+    # on Exec Summary and every sheet below follows automatically.
+    ws["H6"] = "='01 Exec Summary'!$K$2"
     ws["H6"].font = Font(bold=True, size=12, color=NAVY)
     ws["H6"].fill = GOLD_FILL
     ws["H6"].alignment = Alignment(horizontal="center")
-    dv_fy = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
-    ws.add_data_validation(dv_fy)
-    dv_fy.add(ws["H6"])
-    ws["I6"] = "3 years, all 16 entities"
+    ws["I6"] = "set on 01 Exec Summary → flows to every sheet"
     ws["I6"].font = Font(size=8, italic=True, color=GREY)
 
     # Helper: selected EntityId
