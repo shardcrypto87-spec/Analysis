@@ -119,6 +119,14 @@ def flat_card(ws, top_row, left_col, width, label, formula, fmt=MONEY, sub=None)
         sc.alignment = Alignment(horizontal="left", indent=1)
 
 
+def back_link(ws, cell_ref, text="← 01 Exec Summary"):
+    c = ws[cell_ref]
+    c.value = text
+    c.font = Font(size=9, bold=True, color=NAVY, underline="single")
+    c.hyperlink = "#'01 Exec Summary'!A1"
+    c.alignment = Alignment(horizontal="left", vertical="center")
+
+
 def style_kpi_card(ws, top_row, left_col, label, formula, fmt=MONEY, big_fill=NAVY_FILL, val_font=None):
     col = get_column_letter(left_col)
     col2 = get_column_letter(left_col + 1)
@@ -310,9 +318,12 @@ def main():
     for label, target in nav_items:
         c = wsx.cell(row=nav_row, column=col_i, value=label)
         if target:
-            c.font = Font(size=9, bold=(target == "01 Exec Summary"), color=NAVY)
+            c.font = Font(size=9, bold=(target == "01 Exec Summary"), color=NAVY,
+                          underline="single" if target != "01 Exec Summary" else None)
             if target == "01 Exec Summary":
                 c.border = Border(bottom=Side(style="medium", color=GOLD))
+            else:
+                c.hyperlink = f"#'{target}'!A1"
         else:
             c.font = Font(size=9, color="C7C2B8", italic=True)
         col_i += 2
@@ -323,10 +334,12 @@ def main():
     wsx.merge_cells("B11:M12")
     wsx["B11"] = ('="The one-page summary — six headline numbers below, each labelled with its data '
                   'confidence so nothing is trusted more than it should be. The Select Fiscal Year box '
-                  'above (top right) is the master control for the whole workbook — change it here and '
-                  '02 Profitability, Entity Register, Group Summary and the industry table below all '
-                  'follow. Currently showing "&$K$2&". The trend sections further down (Notable Movers, '
-                  'the revenue/EBITDA chart) stay fixed to FY2023→FY2025 regardless of this selector."')
+                  'above (top right) drives every group-wide view — this page\'s own KPI cards, the '
+                  'industry table below, Entity Register and Group Summary — currently showing "&$K$2&'
+                  '". 02 Profitability has its own separate fiscal-year selector for drilling into one '
+                  'entity\'s history without changing the group-wide numbers here. The trend sections '
+                  'further down (Notable Movers, the revenue/EBITDA chart) stay fixed to FY2023→FY2025 '
+                  'regardless of either selector."')
     wsx["B11"].font = Font(size=9.5, italic=True, color=GREY)
     wsx["B11"].alignment = Alignment(wrap_text=True, vertical="top")
 
@@ -580,6 +593,7 @@ def main():
         ws.column_dimensions[col].width = w
     paint_background(ws, max_row=70, max_col=12)
 
+    back_link(ws, "B1")
     ws.merge_cells("B2:J3")
     ws["B2"] = "SANDHU GROUP — Financial Dashboard"
     ws["B2"].font = TITLE_FONT
@@ -609,16 +623,23 @@ def main():
     ws.add_data_validation(dv_entity)
     dv_entity.add(ws["C6"])
 
-    ws["G6"] = "Fiscal Year"
+    ws["G6"] = "Fiscal Year (this page)"
     ws["G6"].font = LABEL
-    # H6 mirrors the master selector on 01 Exec Summary — one control for
-    # the whole workbook. Not its own dropdown any more: change the year
-    # on Exec Summary and every sheet below follows automatically.
-    ws["H6"] = "='01 Exec Summary'!$K$2"
+    # Independent dropdown — deliberately NOT linked to 01 Exec Summary's
+    # selector. Plain Excel formulas can't make two independently-editable
+    # cells sync both ways (that needs a macro/VBA, which we're avoiding
+    # for a file that'll be handed to a client). Instead each page owns
+    # its own scope: this selector drives only this page's single-entity
+    # drill-down; Exec Summary's selector drives the group-wide numbers
+    # (Entity Register, Group Summary, Exec Summary's own KPI cards).
+    ws["H6"] = "FY2025"
     ws["H6"].font = Font(bold=True, size=12, color=NAVY)
     ws["H6"].fill = GOLD_FILL
     ws["H6"].alignment = Alignment(horizontal="center")
-    ws["I6"] = "set on 01 Exec Summary → flows to every sheet"
+    dv_fy_local = DataValidation(type="list", formula1="=Dim_Calendar!$A$2:$A$4", allow_blank=False)
+    ws.add_data_validation(dv_fy_local)
+    dv_fy_local.add(ws["H6"])
+    ws["I6"] = "independent of 01 Exec Summary's selector — see note"
     ws["I6"].font = Font(size=8, italic=True, color=GREY)
 
     # Helper: selected EntityId
@@ -701,6 +722,144 @@ def main():
     chart.legend = None
     ws.add_chart(chart, f"G{cat_row0+1}")
 
+    # ------------------------------------------------------------------ #
+    # Key Ratios — Common-Size P&L (every line as % of Revenue), with a
+    # same-year group benchmark for context. This is the standard CPA
+    # technique for reading cost structure and comparing entities that
+    # differ hugely in absolute size — answers "what's my labour cost
+    # ratio vs. the group" directly, rather than raw dollars.
+    # ------------------------------------------------------------------ #
+    ratio_row0 = cat_last_row + 3
+    ws.merge_cells(f"B{ratio_row0}:J{ratio_row0}")
+    ws[f"B{ratio_row0}"] = "Key Ratios — Common-Size P&L (% of Revenue), Selected Entity vs Group, Same Year"
+    ws[f"B{ratio_row0}"].font = H1
+    ws[f"B{ratio_row0}"].fill = NAVY_FILL
+    for col in "CDEFGHIJ":
+        ws[f"{col}{ratio_row0}"].fill = NAVY_FILL
+
+    rhdr = ratio_row0 + 1
+    rheaders = ["Category", "This Entity", "Group Avg", "vs Group (pp)"]
+    for i, h in enumerate(rheaders):
+        c = ws.cell(row=rhdr, column=2 + i, value=h)
+        c.font = Font(bold=True, color=WHITE)
+        c.fill = TEAL_FILL
+
+    def sumifs_raw(cat):
+        return (f'SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],{eid_cell},'
+                f'Fact_TrialBalance[Category],"{cat}",Fact_TrialBalance[FiscalYear],{fy_cell})')
+
+    def sumifs_group_raw(cat):
+        return (f'SUMIFS(Fact_TrialBalance[Amount],'
+                f'Fact_TrialBalance[Category],"{cat}",Fact_TrialBalance[FiscalYear],{fy_cell})')
+
+    rev_entity = f'-({sumifs_raw("Operating Revenue")})'
+    rev_group = f'-({sumifs_group_raw("Operating Revenue")})'
+    cost_categories = [c for c in CATEGORIES if c not in INCOME_CATS]
+    rr = rhdr + 1
+    for cat in cost_categories:
+        ws.cell(row=rr, column=2, value=cat)
+        this_pct = ws.cell(row=rr, column=3,
+                            value=f'=IFERROR(({sumifs_raw(cat)})/({rev_entity}),0)')
+        grp_pct = ws.cell(row=rr, column=4,
+                           value=f'=IFERROR(({sumifs_group_raw(cat)})/({rev_group}),0)')
+        ws.cell(row=rr, column=5, value=f"=C{rr}-D{rr}")
+        this_pct.number_format = PCT
+        grp_pct.number_format = PCT
+        ws.cell(row=rr, column=5).number_format = PCT
+        rr += 1
+    cost_last = rr - 1
+    # Higher cost ratio than the group is worse — flag it red; lower is green.
+    ws.conditional_formatting.add(
+        f"E{rhdr+1}:E{cost_last}",
+        CellIsRule(operator="greaterThan", formula=["0.005"], font=Font(color=RED, bold=True)),
+    )
+    ws.conditional_formatting.add(
+        f"E{rhdr+1}:E{cost_last}",
+        CellIsRule(operator="lessThan", formula=["-0.005"], font=Font(color=GREEN, bold=True)),
+    )
+
+    # Summary margin rows
+    rr += 1
+    margin_rows = [
+        ("Gross Margin", f'=IFERROR(({rev_entity}-({sumifs_raw("COGS")}))/({rev_entity}),0)',
+         f'=IFERROR(({rev_group}-({sumifs_group_raw("COGS")}))/({rev_group}),0)'),
+        ("EBITDA Margin", f"=B{row2+1}", None),
+        ("Net Margin", f'=IFERROR({net_income_formula[1:]}/({rev_entity}),0)', None),
+    ]
+    for label, this_formula, grp_formula in margin_rows:
+        ws.cell(row=rr, column=2, value=label).font = Font(bold=True, color=NAVY)
+        c3 = ws.cell(row=rr, column=3, value=this_formula)
+        c3.number_format = PCT
+        c3.font = Font(bold=True, color=NAVY)
+        if grp_formula:
+            c4 = ws.cell(row=rr, column=4, value=grp_formula)
+            c4.number_format = PCT
+            ws.cell(row=rr, column=5, value=f"=C{rr}-D{rr}").number_format = PCT
+        rr += 1
+    ratio_last = rr - 1
+    for rrr in range(rhdr, ratio_last + 1):
+        for cc in range(2, 6):
+            ws.cell(row=rrr, column=cc).border = Border(bottom=Side(style="thin", color="D0D5DD"))
+
+    ws.merge_cells(f"B{ratio_last+1}:J{ratio_last+1}")
+    ws[f"B{ratio_last+1}"] = ("\"Group Avg\" = that category's total across all 16 entities ÷ group revenue, "
+                               "same fiscal year (a size-weighted benchmark, not an average of each entity's own "
+                               "ratio).")
+    ws[f"B{ratio_last+1}"].font = Font(size=8, italic=True, color=GREY)
+
+    # ------------------------------------------------------------------ #
+    # 3-year trend for the selected entity — same ratios, FY2023-FY2025
+    # ------------------------------------------------------------------ #
+    trend_row0 = ratio_last + 3
+    ws.merge_cells(f"B{trend_row0}:J{trend_row0}")
+    ws[f"B{trend_row0}"] = "3-Year Trend — Selected Entity"
+    ws[f"B{trend_row0}"].font = H1
+    ws[f"B{trend_row0}"].fill = NAVY_FILL
+    for col in "CDEFGHIJ":
+        ws[f"{col}{trend_row0}"].fill = NAVY_FILL
+
+    # Columns 2,3,4,5,7,8,9 — skip column F (index 6), which is a narrow
+    # 3-wide spacer used between the KPI card groups above, not fit for a
+    # real data column (percentages there render as "###").
+    tcols = [2, 3, 4, 5, 7, 8, 9]
+    thdr = trend_row0 + 1
+    theaders = ["Fiscal Year", "Revenue", "COGS %", "Payroll %", "Occupancy %", "EBITDA Margin", "Net Margin"]
+    for col_i, h in zip(tcols, theaders):
+        c = ws.cell(row=thdr, column=col_i, value=h)
+        c.font = Font(bold=True, color=WHITE)
+        c.fill = TEAL_FILL
+
+    def sumifs_raw_fy(cat, fy_lit):
+        return (f'SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],{eid_cell},'
+                f'Fact_TrialBalance[Category],"{cat}",Fact_TrialBalance[FiscalYear],"{fy_lit}")')
+
+    def sumifs_all_fy(fy_lit):
+        return (f'SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[EntityId],{eid_cell},'
+                f'Fact_TrialBalance[FiscalYear],"{fy_lit}")')
+
+    excl3 = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
+    for i, fy_lit in enumerate(["FY2023", "FY2024", "FY2025"]):
+        rr = thdr + 1 + i
+        ws.cell(row=rr, column=tcols[0], value=fy_lit)
+        rev_fy = f'-({sumifs_raw_fy("Operating Revenue", fy_lit)})'
+        ws.cell(row=rr, column=tcols[1], value=f"={rev_fy}").number_format = MONEY
+        ws.cell(row=rr, column=tcols[2],
+                value=f'=IFERROR(({sumifs_raw_fy("COGS", fy_lit)})/({rev_fy}),0)').number_format = PCT
+        ws.cell(row=rr, column=tcols[3],
+                value=f'=IFERROR(({sumifs_raw_fy("Payroll & Benefits", fy_lit)})/({rev_fy}),0)').number_format = PCT
+        ws.cell(row=rr, column=tcols[4],
+                value=f'=IFERROR(({sumifs_raw_fy("Occupancy", fy_lit)})/({rev_fy}),0)').number_format = PCT
+        ebitda_fy = (f'-({sumifs_all_fy(fy_lit)}-SUMPRODUCT((Fact_TrialBalance[EntityId]={eid_cell})*'
+                     f'(Fact_TrialBalance[FiscalYear]="{fy_lit}")*'
+                     f'(ISNUMBER(MATCH(Fact_TrialBalance[Category],{{"{excl3}"}},0)))*Fact_TrialBalance[Amount]))')
+        ws.cell(row=rr, column=tcols[5], value=f'=IFERROR(({ebitda_fy})/({rev_fy}),0)').number_format = PCT
+        ni_fy = f'-({sumifs_all_fy(fy_lit)})'
+        ws.cell(row=rr, column=tcols[6], value=f'=IFERROR(({ni_fy})/({rev_fy}),0)').number_format = PCT
+    trend_last = thdr + 3
+    for rrr in range(thdr, trend_last + 1):
+        for col_i in tcols:
+            ws.cell(row=rrr, column=col_i).border = Border(bottom=Side(style="thin", color="D0D5DD"))
+
     ws.freeze_panes = "A5"
 
     # ------------------------------------------------------------------ #
@@ -715,6 +874,7 @@ def main():
         wst.column_dimensions[col].width = w
     paint_background(wst, max_row=60, max_col=13)
 
+    back_link(wst, "L1")
     badge(wst, "B2:J2", "RESTAURANT INDIAROSA 2 — CORPORATE TAXPREP EXPORT, CROSS-VALIDATED FIELDS ONLY")
     wst.merge_cells("B4:L5")
     wst["B4"] = "Tax Position — Restaurant IndiaRosa 2 & Associated Group"
@@ -845,8 +1005,9 @@ def main():
     ws2.sheet_view.showGridLines = False
     ws2.sheet_properties.tabColor = NAVY
     paint_background(ws2, max_row=25, max_col=12)
+    back_link(ws2, "A3")
     ws2.merge_cells("A1:K2")
-    ws2["A1"] = "Entity Register — driven by 02 Profitability's fiscal-year selector"
+    ws2["A1"] = "Entity Register — driven by 01 Exec Summary's fiscal-year selector"
     ws2["A1"].font = H1
     ws2["A1"].fill = NAVY_FILL
     for col in "BCDEFGHIJK":
@@ -866,7 +1027,9 @@ def main():
         "Interest & Financing": "Interest & Financing", "Amortization": "Amortization",
         "Income Tax": "Income Tax",
     }
-    fy_ref = "'02 Profitability'!$H$6"
+    # Entity Register is a group-wide table, so it follows Exec Summary's
+    # master selector, not 02 Profitability's page-local one.
+    fy_ref = "'01 Exec Summary'!$K$2"
     for i, eid in enumerate(entity_ids):
         rr = hdr_row + 1 + i
         ws2.cell(row=rr, column=1, value=entity_names[eid])
@@ -915,8 +1078,9 @@ def main():
     ws3.sheet_view.showGridLines = False
     ws3.sheet_properties.tabColor = NAVY
     paint_background(ws3, max_row=25, max_col=10)
+    back_link(ws3, "B1")
     ws3.merge_cells("B2:H3")
-    ws3["B2"] = "Group Summary — driven by 02 Profitability's fiscal-year selector"
+    ws3["B2"] = "Group Summary — driven by 01 Exec Summary's fiscal-year selector"
     ws3["B2"].font = H1
     ws3["B2"].fill = NAVY_FILL
     for col in "CDEFGH":
@@ -985,8 +1149,9 @@ def main():
     # ------------------------------------------------------------------ #
     ws4 = wb.create_sheet("Notes & Validation")
     ws4.sheet_properties.tabColor = GREY
-    paint_background(ws4, max_row=45, max_col=2)
+    paint_background(ws4, max_row=45, max_col=3)
     ws4.column_dimensions["A"].width = 100
+    back_link(ws4, "C1")
     notes = [
         "SANDHU GROUP INTERACTIVE DASHBOARD — Build Notes",
         "",
