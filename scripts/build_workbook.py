@@ -13,7 +13,11 @@ import openpyxl
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, NamedStyle
-from openpyxl.chart import BarChart, PieChart, Reference
+from openpyxl.chart import BarChart, PieChart, DoughnutChart, Reference
+from openpyxl.chart.series import DataPoint
+from openpyxl.drawing.fill import PatternFillProperties
+from openpyxl.chart.shapes import GraphicalProperties
+from openpyxl.chart.label import DataLabelList
 from openpyxl.utils import get_column_letter
 from openpyxl.formatting.rule import CellIsRule, DataBarRule
 
@@ -306,13 +310,15 @@ def main():
                  "Prepared for group management review")
     wsx["B6"].font = Font(size=10, italic=True, color=GREY)
 
-    # Nav tabs — only 01/02/03 exist as sheets so far; the rest are shown
-    # greyed out as a roadmap, matching the reference's 7-page structure.
+    # Nav tabs — only 01/02/03/04 exist as sheets so far; the rest are
+    # shown greyed out as a roadmap, matching the reference's page
+    # structure. Group Summary sits at 03 per your request.
     nav_row = 8
     nav_items = [
         ("01 Executive Summary", "01 Exec Summary"), ("02 Profitability", "02 Profitability"),
-        ("03 Tax Position", "03 Tax Position"), ("04 Debt & Liquidity", None),
-        ("05 Wealth of Group", None), ("06 Reorg & LCGE", None), ("07 Risk & Alerts", None),
+        ("03 Group Summary", "03 Group Summary"), ("04 Tax Position", "04 Tax Position"),
+        ("05 Debt & Liquidity", None), ("06 Wealth of Group", None),
+        ("07 Reorg & LCGE", None), ("08 Risk & Alerts", None),
     ]
     col_i = 2
     for label, target in nav_items:
@@ -376,7 +382,7 @@ def main():
                 "Validation Log exactly for all of them)."),
         (GOLD, "SBD & GRIP — real, cross-checked against Corporate Taxprep (14 of 16 entities; excludes "
                "IndiaRosa 2 & Sandhu & Sandhu's own claims, not found in that export)."),
-        (GREY, "RDTOH & CDA — confirmed NOT present in the Taxprep export tested (see 03 Tax Position)."),
+        (GREY, "RDTOH & CDA — confirmed NOT present in the Taxprep export tested (see 04 Tax Position)."),
         (GREY, "Balance sheet / consolidated net worth — not available; the WTB export is income-statement only."),
         (RED, "One unexpected entity (9475-3381 Québec Inc.) appears in the Taxprep data but has no WTB and "
               "isn't in scope — needs your confirmation on whether it belongs in the group."),
@@ -863,11 +869,11 @@ def main():
     ws.freeze_panes = "A5"
 
     # ------------------------------------------------------------------ #
-    # Sheet: 03 Tax Position (real Taxprep-sourced figures for IndiaRosa 2
+    # Sheet: 04 Tax Position (real Taxprep-sourced figures for IndiaRosa 2
     # and its associated group — every number here was cross-checked
     # against an independently-known figure before being trusted)
     # ------------------------------------------------------------------ #
-    wst = wb.create_sheet("03 Tax Position", 2)
+    wst = wb.create_sheet("04 Tax Position", 2)
     wst.sheet_view.showGridLines = False
     wst.sheet_properties.tabColor = TEAL
     for col, w in zip("ABCDEFGHIJKL", [3, 15, 15, 15, 15, 3, 15, 15, 15, 3, 15, 15]):
@@ -1074,12 +1080,12 @@ def main():
     # ------------------------------------------------------------------ #
     # Sheet: Group Summary
     # ------------------------------------------------------------------ #
-    ws3 = wb.create_sheet("Group Summary")
+    ws3 = wb.create_sheet("03 Group Summary")
     ws3.sheet_view.showGridLines = False
     ws3.sheet_properties.tabColor = NAVY
-    for col, w in zip("ABCDEFGHIJKL", [3, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]):
+    for col, w in zip("ABCDEFGHIJKLM", [3, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]):
         ws3.column_dimensions[col].width = w
-    paint_background(ws3, max_row=45, max_col=13)
+    paint_background(ws3, max_row=140, max_col=14)
     back_link(ws3, "B1")
 
     badge(ws3, "B2:E2", "GROUP SUMMARY — ALL ENTITIES, ONE FISCAL YEAR")
@@ -1209,6 +1215,98 @@ def main():
     ws3.add_chart(chart2, f"B{lb_last+3}")
 
     # ------------------------------------------------------------------ #
+    # Business by Category — colored Industry cards + a donut chart for
+    # revenue mix, all following this sheet's own K2 (mirrors 01 Exec
+    # Summary's selector).
+    # ------------------------------------------------------------------ #
+    CATEGORY_COLORS = {
+        "Restaurant": TEAL, "Hotel": GOLD, "Investments": NAVY,
+        "Real estate": GREEN, "Rental": "8A6D3B", "Construction": "6B7280",
+    }
+    bc_row0 = lb_last + 25
+    ws3.merge_cells(f"B{bc_row0}:L{bc_row0}")
+    ws3[f"B{bc_row0}"] = "Business by Category"
+    ws3[f"B{bc_row0}"].font = Font(size=13, bold=True, color=NAVY)
+    ws3.merge_cells(f"B{bc_row0+1}:L{bc_row0+1}")
+    ws3[f"B{bc_row0+1}"] = ('="Revenue & profitability mix across every industry in the group, fiscal year "&'
+                             "$K$2")
+    ws3[f"B{bc_row0+1}"].font = Font(size=9, italic=True, color=GREY)
+
+    segments_present_gs = sorted({entity_industry[e] for e in entity_ids})
+    card_row = bc_row0 + 3
+    for i, seg in enumerate(segments_present_gs):
+        col = 2 + i * 2
+        color = CATEGORY_COLORS.get(seg, GREY)
+        col_l, col_l2 = get_column_letter(col), get_column_letter(col + 1)
+        ws3.merge_cells(f"{col_l}{card_row}:{col_l2}{card_row}")
+        lc = ws3[f"{col_l}{card_row}"]
+        lc.value = seg.upper()
+        lc.font = Font(size=9, bold=True, color=WHITE)
+        lc.fill = PatternFill("solid", fgColor=color)
+        lc.alignment = Alignment(horizontal="center", vertical="center")
+        ws3.merge_cells(f"{col_l}{card_row+1}:{col_l2}{card_row+2}")
+        vc = ws3[f"{col_l}{card_row+1}"]
+        vc.value = (f'=-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
+                    f'Fact_TrialBalance[Category],"Operating Revenue",Fact_TrialBalance[FiscalYear],$K$2)'
+                    f'-SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
+                    f'Fact_TrialBalance[Category],"Investment & Other Income",Fact_TrialBalance[FiscalYear],$K$2)')
+        vc.number_format = MONEY
+        vc.font = Font(size=13, bold=True, color=NAVY)
+        vc.fill = CARD_FILL
+        vc.alignment = Alignment(horizontal="center", vertical="center")
+        excl_bc = '","'.join(["Interest & Financing", "Amortization", "Income Tax"])
+        ws3.merge_cells(f"{col_l}{card_row+3}:{col_l2}{card_row+3}")
+        mc = ws3[f"{col_l}{card_row+3}"]
+        mc.value = (f'=IFERROR(-(SUMIFS(Fact_TrialBalance[Amount],Fact_TrialBalance[Industry],"{seg}",'
+                    f'Fact_TrialBalance[FiscalYear],$K$2)-SUMPRODUCT((Fact_TrialBalance[Industry]="{seg}")*'
+                    f'(Fact_TrialBalance[FiscalYear]=$K$2)*(ISNUMBER(MATCH(Fact_TrialBalance[Category],'
+                    f'{{"{excl_bc}"}},0)))*Fact_TrialBalance[Amount]))/{col_l}{card_row+1},"n/m")')
+        mc.number_format = PCT
+        mc.font = Font(size=9, italic=True, color=GREY)
+        mc.alignment = Alignment(horizontal="center", vertical="center")
+        for rr in range(card_row, card_row + 4):
+            for cc in (col, col + 1):
+                ws3.cell(row=rr, column=cc).border = CARD_BORDER
+
+    # Small data table feeding the donut (revenue by industry). Uses
+    # columns C/E, NOT B — column B was set to width 6 for the
+    # leaderboard's Rank column above, which would squash "Industry"
+    # labels here since column width is a whole-column property.
+    dd_row = card_row + 6
+    ws3[f"C{dd_row}"] = "Industry"
+    ws3[f"E{dd_row}"] = "Revenue"
+    for c in (f"C{dd_row}", f"E{dd_row}"):
+        ws3[c].font = Font(bold=True, color=WHITE)
+        ws3[c].fill = TEAL_FILL
+    for i, seg in enumerate(segments_present_gs):
+        rr = dd_row + 1 + i
+        ws3.cell(row=rr, column=3, value=seg)
+        col_l = get_column_letter(2 + i * 2)
+        ws3.cell(row=rr, column=5, value=f"={col_l}{card_row+1}").number_format = MONEY
+    dd_last = dd_row + len(segments_present_gs)
+
+    donut = DoughnutChart()
+    donut.title = "Revenue Share by Industry"
+    donut.style = 10
+    ddata = Reference(ws3, min_col=5, min_row=dd_row, max_row=dd_last)
+    dcats = Reference(ws3, min_col=3, min_row=dd_row + 1, max_row=dd_last)
+    donut.add_data(ddata, titles_from_data=True)
+    donut.set_categories(dcats)
+    donut.dataLabels = DataLabelList()
+    donut.dataLabels.showPercent = True
+    donut.dataLabels.showCatName = False
+    donut.dataLabels.showSerName = False
+    donut.dataLabels.showVal = False
+    donut.dataLabels.showLegendKey = False
+    for i, seg in enumerate(segments_present_gs):
+        pt = DataPoint(idx=i)
+        pt.graphicalProperties = GraphicalProperties(solidFill=CATEGORY_COLORS.get(seg, GREY))
+        donut.series[0].data_points.append(pt)
+    donut.height = 10
+    donut.width = 16
+    ws3.add_chart(donut, f"B{dd_last+2}")
+
+    # ------------------------------------------------------------------ #
     # Sheet: Notes
     # ------------------------------------------------------------------ #
     ws4 = wb.create_sheet("Notes & Validation")
@@ -1301,8 +1399,8 @@ def main():
         sheet.print_options.horizontalCentered = False
 
     desired_order = [
-        "01 Exec Summary", "02 Profitability", "03 Tax Position",
-        "Entity Register", "Group Summary", "Notes & Validation",
+        "01 Exec Summary", "02 Profitability", "03 Group Summary", "04 Tax Position",
+        "Entity Register", "Notes & Validation",
         "Dim_Entity", "Dim_Calendar", "Fact_TrialBalance",
     ]
     wb._sheets = [wb[name] for name in desired_order]
