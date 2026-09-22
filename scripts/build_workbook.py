@@ -10,6 +10,8 @@ when a selector changes.
 """
 import json
 import openpyxl
+from entity_map import FILE_PREFIX_TO_ENTITY
+from extract_indiarosa2 import EXCEPTIONS as IN2_EXCEPTIONS
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, NamedStyle
@@ -1398,10 +1400,60 @@ def main():
         sheet.sheet_properties.pageSetUpPr.fitToPage = True
         sheet.print_options.horizontalCentered = False
 
+    # ------------------------------------------------------------------ #
+    # PQ_* reference tables — everything a future Power Query refresh
+    # needs to reproduce this year's categorization automatically. Kept
+    # as real Excel Tables so Power Query can read them via
+    # Excel.CurrentWorkbook() with no external file dependency.
+    # ------------------------------------------------------------------ #
+    wb_gifi = openpyxl.load_workbook("data/GIFI_Master_Mapping_v2.xlsx", data_only=True)
+
+    def make_ref_sheet(name, headers, rows, col_widths):
+        wsr = wb.create_sheet(name)
+        wsr.sheet_properties.tabColor = "C7C2B8"
+        wsr.append(headers)
+        for r in rows:
+            wsr.append(r)
+        for c in wsr[1]:
+            c.font = Font(bold=True, color=WHITE)
+            c.fill = NAVY_FILL
+        for col, w in zip("ABCDEFG", col_widths):
+            wsr.column_dimensions[col].width = w
+        last_col = get_column_letter(len(headers))
+        tab = Table(displayName=name, ref=f"A1:{last_col}{wsr.max_row}")
+        tab.tableStyleInfo = TableStyleInfo(name="TableStyleMedium2", showRowStripes=True)
+        wsr.add_table(tab)
+        return wsr
+
+    make_ref_sheet(
+        "PQ_Dim_FilePrefix", ["FilePrefix", "EntityId"],
+        [[prefix, eid] for prefix, eid in FILE_PREFIX_TO_ENTITY.items()],
+        [16, 14],
+    )
+
+    gifi_rows = [[str(code).strip(), cat] for code, cat, _ in
+                 wb_gifi["GIFI Master Mapping"].iter_rows(min_row=2, values_only=True) if code is not None]
+    make_ref_sheet("PQ_GIFI_Mapping", ["GIFICode", "Category"], gifi_rows, [12, 26])
+
+    fallback_rows = []
+    started = False
+    for row in wb_gifi["Fallback - Map No (blank GIFI)"].iter_rows(values_only=True):
+        if row[0] == "FilePrefix":
+            started = True
+            continue
+        if started and row[0]:
+            fp, mapno, cat, _ = row
+            fallback_rows.append([fp, "".join(str(mapno).split()), cat])
+    make_ref_sheet("PQ_Fallback_MapNo", ["FilePrefix", "MapNoNormalized", "Category"], fallback_rows, [12, 16, 26])
+
+    exception_rows = [["Res_In2", acct, cat] for acct, cat in IN2_EXCEPTIONS.items()]
+    make_ref_sheet("PQ_Exceptions", ["FilePrefix", "AccountNo", "Category"], exception_rows, [12, 12, 26])
+
     desired_order = [
         "01 Exec Summary", "02 Profitability", "03 Group Summary", "04 Tax Position",
         "Entity Register", "Notes & Validation",
         "Dim_Entity", "Dim_Calendar", "Fact_TrialBalance",
+        "PQ_Dim_FilePrefix", "PQ_GIFI_Mapping", "PQ_Fallback_MapNo", "PQ_Exceptions",
     ]
     wb._sheets = [wb[name] for name in desired_order]
     wb.active = 0
